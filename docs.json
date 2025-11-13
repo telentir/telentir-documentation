@@ -44,6 +44,26 @@
               "ai-tools/claude-code",
               "ai-tools/windsurf"
             ]
+          },
+          {
+            "group": "Product guides",
+            "pages": [
+              "guides/dashboard",
+              "guides/contacts",
+              "guides/messages",
+              "guides/call-history",
+              "guides/live-monitoring",
+              "guides/campaigns",
+              "guides/agents",
+              "guides/personas",
+              "guides/tasks",
+              "guides/conversational-pathways",
+              "guides/knowledge-bases",
+              "guides/phone-numbers",
+              "guides/inbound",
+              "guides/integrations",
+              "guides/api-keys"
+            ]
           }
         ]
       },
