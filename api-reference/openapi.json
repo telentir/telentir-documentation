@@ -18,6 +18,15 @@
       "bearerAuth": []
     }
   ],
+  "seo": {
+    "metatags": {
+      "title": "Telentir API Documentation",
+        "og:image": "/og-docs-tel.png",
+        "keywords": "Telentir, API, Documentation, Developer, Guide, Reference, ai voice agent, automation, no-code, low-code",
+        "description": "Telentir API documentation provides comprehensive guides and references to help developers integrate and utilize Telentir's AI voice agent and automation platform effectively."
+    },
+    "indexing": "all"
+  },
   "paths": {
     "/plants": {
       "get": {
