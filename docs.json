@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Telentir Documentation",
+  "name": "Telentir",
   "colors": {
     "primary": "#2b6ef5",
     "light": "#fff",
@@ -79,7 +79,7 @@
     }
   },
   "logo": {
-    "light": "/favicon.png",
+    "light": "/tel_light.png",
     "dark": "/favicon.png"
   },
   "navbar": {
