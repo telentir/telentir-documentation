@@ -80,7 +80,7 @@
   },
   "logo": {
     "light": "/tel-light.png",
-    "dark": "/tel_light.png"
+    "dark": "/tel-dark.png"
   },
   "navbar": {
     "links": [
