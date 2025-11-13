@@ -3,11 +3,8 @@ title: 'Get Auth'
 description: 'Check the current Telentir session status.'
 ---
 
+<Endpoint method="GET" path="/api/auth" summary="Get Auth" />
 
-<div class="endpoint-heading">
-  <span class="method-chip method-get">GET</span>
-  <span class="endpoint-heading__label">Get Auth</span>
-</div>
 <div class="endpoint-grid">
   <section>
 
@@ -82,44 +79,6 @@ const data = await res.json();
 </div>
 
 <style>
-.endpoint-heading {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 1.5rem 0 1rem;
-}
-.endpoint-heading__label {
-  font-size: 1.75rem;
-  font-weight: 600;
-}
-.method-chip {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 0.15rem 0.85rem;
-  border-radius: 999px;
-  text-transform: uppercase;
-}
-.method-chip.method-get {
-  background: #d1fae5;
-  color: #065f46;
-}
-.method-chip.method-post {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-.method-chip.method-put {
-  background: #fef3c7;
-  color: #92400e;
-}
-.method-chip.method-delete {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-.method-chip.method-patch {
-  background: #ede9fe;
-  color: #6d28d9;
-}
 .endpoint-grid {
   display: grid;
   gap: 1.5rem;
@@ -141,3 +100,4 @@ details.try-it > summary {
   font-weight: 600;
 }
 </style>
+
