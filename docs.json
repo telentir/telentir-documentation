@@ -52,7 +52,8 @@
             "pages": [
               "api-reference/introduction",
               "api-reference/authentication",
-              "api-reference/data-plane"
+              "api-reference/data-plane",
+              "api-reference/api-endpoints"
             ]
           },
           {
