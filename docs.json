@@ -85,7 +85,7 @@
         {
           "anchor": "Pricing",
           "href": "https://telentir.com/pricing",
-          "icon": "price"
+          "icon": "badge-dollar-sign"
         },
         {
           "anchor": "Blog",
@@ -95,7 +95,7 @@
         {
           "anchor": "Enterprise",
           "href": "https://telentir.com/enterprise",
-          "icon": "enterprise"
+          "icon": "building"
         }
       ]
     }
