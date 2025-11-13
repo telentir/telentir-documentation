@@ -1,94 +1,30 @@
 ---
-title: 'Development'
-description: 'Preview changes locally to update your docs'
+title: "Rollout Checklist"
+description: "Coordinate security reviews, integrations, and change management when deploying Telentir."
 ---
 
-<Info>
-  **Prerequisites**:
-  - Node.js version 19 or higher
-  - A docs repository with a `docs.json` file
-</Info>
+## Access & security
 
-Follow these steps to install and run Mintlify on your operating system.
+1. **User provisioning** – Decide whether you will invite users manually or connect to your identity provider (Okta, Azure AD, Google Workspace).
+2. **Permissions** – Map roles to Telentir workspaces (e.g., Admin, Supervisor, Agent) and confirm least-privilege access.
+3. **Audit logging** – Enable your preferred SIEM export if your compliance team needs call metadata outside of Telentir.
 
-<Steps>
-<Step title="Install the Mintlify CLI">
+## Data flows
 
-```bash
-npm i -g mint
-```
-</Step>
+- **CRMs** – Use Telentir webhooks or APIs to sync call outcomes, tags, and transcripts back to Salesforce, HubSpot, or the CRM of your choice.
+- **Calendars** – Connect Calendly (or the meeting scheduler you rely on) so the AI can book appointments when prospects say "yes."
+- **Storage** – Review retention settings for call audio, transcripts, and SMS history to ensure they match your company policy.
 
-<Step title="Preview locally">
+## Testing plan
 
-Navigate to your docs directory where your `docs.json` file is located, and run the following command:
+1. Populate a sandbox tag (e.g., `Pilot`) with internal numbers.
+2. Run through the entire call flow: AI intro, qualification logic, human transfer, SMS follow-up, CRM sync.
+3. Document expected outcomes and share recordings with stakeholders for approval.
 
-```bash
-mint dev
-```
+## Launch & adoption
 
-A local preview of your documentation will be available at `http://localhost:3000`.
+- **Training** – Give managers a tour of Dashboard, Live Monitoring, Call History, and Messages so they know how to coach AI performance.
+- **Playbooks** – Store objection handling tips, FAQs, and compliance snippets in a knowledge base and link it to every relevant agent.
+- **Iteration loop** – Schedule weekly reviews to adjust prompts, pathways, or routing rules based on real call data.
 
-</Step>
-</Steps>
-
-## Custom ports
-
-By default, Mintlify uses port 3000. You can customize the port Mintlify runs on by using the `--port` flag. For example, to run Mintlify on port 3333, use this command:
-
-```bash
-mint dev --port 3333
-```
-
-If you attempt to run Mintlify on a port that's already in use, it will use the next available port:
-
-```md
-Port 3000 is already in use. Trying 3001 instead.
-```
-
-## Mintlify versions
-
-Please note that each CLI release is associated with a specific version of Mintlify. If your local preview does not align with the production version, please update the CLI:
-
-```bash
-npm mint update
-```
-
-## Validating links
-
-The CLI can assist with validating links in your documentation. To identify any broken links, use the following command:
-
-```bash
-mint broken-links
-```
-
-## Deployment
-
-If the deployment is successful, you should see the following:
-
-<Frame>
-  <img src="/images/checks-passed.png" alt="Screenshot of a deployment confirmation message that says All checks have passed." style={{ borderRadius: '0.5rem' }} />
-</Frame>
-
-## Code formatting
-
-We suggest using extensions on your IDE to recognize and format MDX. If you're a VSCode user, consider the [MDX VSCode extension](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) for syntax highlighting, and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for code formatting.
-
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title='Error: Could not load the "sharp" module using the darwin-arm64 runtime'>
-
-    This may be due to an outdated version of node. Try the following:
-    1. Remove the currently-installed version of the CLI: `npm remove -g mint`
-    2. Upgrade to Node v19 or higher.
-    3. Reinstall the CLI: `npm i -g mint`
-  </Accordion>
-
-  <Accordion title="Issue: Encountering an unknown error">
-  
-    Solution: Go to the root of your device and delete the `~/.mintlify` folder. Then run `mint dev` again.
-  </Accordion>
-</AccordionGroup>
-
-Curious about what changed in the latest CLI version? Check out the [CLI changelog](https://www.npmjs.com/package/mintlify?activeTab=versions).
+Use this checklist alongside the Quickstart guide to keep your rollout predictable and auditable.
