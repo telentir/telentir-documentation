@@ -1,0 +1,146 @@
+---
+title: 'Authentication & identity'
+description: 'Login, verification, API keys, and MFA flows for the Telentir API'
+---
+
+All of the routes below live in `telentir-web/app/api/auth` (plus
+`/api/api-keys`). They emit JSON responses and expect either a bearer token or
+the `token` HTTP-only cookie.
+
+<Note>
+  All sensitive responses (`token`, `apiKey.key`) are only returned once. Store
+  them securely and send them back via <code>Authorization: Bearer &lt;token&gt;</code>.
+</Note>
+
+## Session status
+
+### `GET /api/auth`
+
+Returns the currently authenticated user (if any) and whether additional steps
+are required.
+
+| Field | Description |
+| ----- | ----------- |
+| `status` | `"ok"`, `"phone_not_verified"`, or `"2fa_required"`. |
+| `auth` | `null` or the user info (`id`, `email`, `firstName`, `lastName`, `phoneVerified`, `twoFactorPassed`, `twoFactorConfigured`). |
+
+When `status` is `"phone_not_verified"` or `"2fa_required"`, the `token` field
+returned by the relevant endpoints still authenticates API calls, but guarded
+routes (e.g. `"requirePhoneVerification": true`) will fail until the extra step
+is completed.
+
+## Email & password
+
+### `POST /api/auth/register`
+
+Body:
+
+| Field | Type | Notes |
+| ---- | ---- | ----- |
+| `firstName`, `lastName` | `string` | Stored inside the user metadata. |
+| `email` | `string` | Unique per user. |
+| `phone` | `string` | Used for SMS verification. |
+| `password`, `confirmPassword` | `string` | Must match; SHA‑256 hash stored. |
+| `remember` | `boolean` | Extends cookie lifetime if `true`. |
+
+Response: `{ status: "phone_not_verified", token: string }`.
+
+### `POST /api/auth/login`
+
+Body: `{ email: string, password: string, remember: boolean }`.
+
+Possible responses:
+
+- `{ status: "ok", token: string }` (2FA not configured)
+- `{ status: "phone_not_verified", token: string }`
+- `{ status: "2fa_required", token: string }` (TOTP challenge needed)
+- `{ status: "error", message: string }`
+
+Successful responses set/refresh the `token` cookie; include the token as a
+bearer header for API clients.
+
+```bash
+curl -X POST https://app.telentir.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{ "email": "demo@telentir.com", "password": "P@ssword123", "remember": true }'
+```
+
+### `GET /api/auth/logout`
+
+Clears the session cookie and returns `{ status: "logout" }`.
+
+## Phone verification (SMS)
+
+Telentir requires verified phone numbers before granting access to data-plane
+routes (`objectAuth`).
+
+1. `POST /api/auth/verify/request` (no body) – sends a 6-digit SMS code.
+2. `POST /api/auth/verify/submit` with `{ code: string }` – validates the code
+   and refreshes the auth token. On success `status` becomes `"ok"`.
+
+Both routes require an authenticated user but `requirePhoneVerification` is set
+to `false` so you can complete the process even if you are not yet verified.
+
+## Password reset
+
+1. `POST /api/auth/reset-password/request` with `{ email: string, returnUrl?: string }`
+   – sends an email with a short-lived token.
+2. `POST /api/auth/reset-password/submit` with
+   `{ token: string, password: string, confirmPassword: string }` – sets the new
+   password and logs the user in (a new JWT is returned and written to the cookie).
+
+## Time-based one-time passwords (2FA)
+
+All TOTP endpoints require the user to be phone-verified.
+
+| Endpoint | Description |
+| -------- | ----------- |
+| `POST /api/auth/2fa/enable/request` | Generates a Base32 secret + QR and returns `{ status: "2fa_setup", otpauthUrl, base32 }`. |
+| `POST /api/auth/2fa/enable/submit` | Body `{ token }`. Confirms the TOTP code and promotes `twoFactorConfigured=true`. |
+| `POST /api/auth/2fa/verify` | Body `{ token }`. Run after login when `status: "2fa_required"`; returns a refreshed JWT. |
+| `POST /api/auth/2fa/reset` | Body `{ token }`. Regenerates the secret while keeping the user signed in (used when rotating authenticators). |
+
+Missing or invalid codes return HTTP 400 with an error string.
+
+## External identity providers
+
+The `/api/auth/external` tree supports OAuth-based sign-in. The exact providers
+are stored in `auth/external/providers`.
+
+1. `GET /api/auth/external/providers` – returns enabled provider slugs.
+2. `GET /api/auth/external/{provider}` – metadata about the provider.
+3. `GET /api/auth/external/{provider}/init?returnTo=<url>` – returns the
+   authorization URL to redirect the browser to.
+4. `GET /api/auth/external/{provider}/redirect` – callback endpoint (Telentir
+   handles this; you shouldn’t call it manually).
+5. `GET /api/auth/external/register/{token}` – completes the signup/attach flow
+   after an OAuth provider redirects back with a registration token.
+
+All external flows eventually respond with the same `{ status, token }` payload
+as the email/password flow, so the downstream experience is identical.
+
+## API keys
+
+Server-to-server integrations should mint API keys and send them as bearer
+tokens. A key inherits the workspace permissions and bypasses short-lived JWTs.
+
+| Endpoint | Body | Notes |
+| -------- | ---- | ----- |
+| `GET /api/api-keys` | — | Returns all keys for the authenticated user (value is masked). |
+| `PUT /api/api-keys` | `{ name: string }` | Generates a key with the prefix `tel_…`. **Response includes the clear-text key once.** |
+| `DELETE /api/api-keys/{id}` | — | Revokes the key (requires phone verification). |
+
+Example (create + use):
+
+```bash
+KEY=$(curl -s -X PUT https://app.telentir.com/api/api-keys \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "backend-job" }' | jq -r '.key')
+
+curl https://app.telentir.com/api/root \
+  -H "Authorization: Bearer $KEY"
+```
+
+Keys never expire automatically. Rotate them periodically and delete unused
+entries from `/api/api-keys`.

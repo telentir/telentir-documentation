@@ -1,67 +1,201 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "Telentir workspace API",
+    "description": "Key authentication and encrypted object endpoints implemented by the telentir-web project.",
+    "version": "2025-11-13"
   },
   "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
+    { "url": "https://app.telentir.com" },
+    { "url": "http://localhost:3000" }
   ],
   "security": [
-    {
-      "bearerAuth": []
-    }
+    { "bearerAuth": [] }
   ],
   "seo": {
     "metatags": {
       "title": "Telentir API Documentation",
-        "og:image": "/og-docs-tel.png",
-        "keywords": "Telentir, API, Documentation, Developer, Guide, Reference, ai voice agent, automation, no-code, low-code",
-        "description": "Telentir API documentation provides comprehensive guides and references to help developers integrate and utilize Telentir's AI voice agent and automation platform effectively."
+      "og:image": "/og-docs-tel.png",
+      "keywords": "Telentir, API, Documentation, Developer, Guide, Reference, ai voice agent, automation, no-code, low-code",
+      "description": "Reference for workspace authentication, encrypted objects, and automation endpoints that power Telentir's AI voice agents."
     },
     "indexing": "all"
   },
   "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+    "/api/auth/login": {
+      "post": {
+        "summary": "Sign in with email & password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password", "remember"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "format": "password" },
+                  "remember": { "type": "boolean", "default": false }
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Login status",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LoginResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Create a workspace user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "phone",
+                  "password",
+                  "confirmPassword",
+                  "remember"
+                ],
+                "properties": {
+                  "firstName": { "type": "string" },
+                  "lastName": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "phone": { "type": "string" },
+                  "password": { "type": "string", "format": "password" },
+                  "confirmPassword": { "type": "string", "format": "password" },
+                  "remember": { "type": "boolean", "default": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registration status",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RegisterResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/api-keys": {
+      "get": {
+        "summary": "List API keys",
+        "responses": {
+          "200": {
+            "description": "Keys owned by the current user",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
+                  "items": { "$ref": "#/components/schemas/ApiKey" }
                 }
               }
             }
+          }
+        }
+      },
+      "put": {
+        "summary": "Create an API key",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ApiKeyCreateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New key (plaintext is returned once)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiKey" }
+              }
+            }
           },
-          "400": {
-            "description": "Unexpected error",
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/api-keys/{id}": {
+      "delete": {
+        "summary": "Delete an API key",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Key deleted" },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/root": {
+      "get": {
+        "summary": "Fetch the encrypted root object",
+        "responses": {
+          "200": {
+            "description": "Root object describing stores and servers",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RootObject" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/server": {
+      "get": {
+        "summary": "Current Telentir server metadata",
+        "responses": {
+          "200": {
+            "description": "Server snapshot",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ServerSnapshot" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/servers": {
+      "get": {
+        "summary": "List registered root servers",
+        "responses": {
+          "200": {
+            "description": "Registered BYOK servers",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RootServer" }
                 }
               }
             }
@@ -69,35 +203,229 @@
         }
       },
       "post": {
-        "description": "Creates a new plant in the store",
+        "summary": "Register a root server",
         "requestBody": {
-          "description": "Plant to add to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "type": "object",
+                "required": ["name", "mode"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "mode": {
+                    "type": "string",
+                    "enum": ["generate", "upload_public"]
+                  },
+                  "publicKey": {
+                    "type": "string",
+                    "description": "Base64URL encoded SPKI string (required when uploading your own key)"
+                  }
+                }
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "Server record and public key material",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RootServer" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/keys": {
+      "put": {
+        "summary": "Create or upload a store key",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["server"],
+                "properties": {
+                  "server": { "type": "string" },
+                  "key": {
+                    "type": "string",
+                    "description": "Base64 encoded AES key (optional)"
+                  },
+                  "iv": {
+                    "type": "string",
+                    "description": "Base64 encoded IV (required if key is provided)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Key ID or published key details",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "oneOf": [
+                    { "type": "string", "description": "Key ID" },
+                    { "$ref": "#/components/schemas/StoreKey" }
+                  ]
                 }
               }
             }
           },
-          "400": {
-            "description": "unexpected error",
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/keys/{id}": {
+      "get": {
+        "summary": "Retrieve key material",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stored key information",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StoreKey" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a key",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/objects": {
+      "put": {
+        "summary": "Create an encrypted object",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EncryptedObjectInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Persisted object",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EncryptedObject" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/objects/{id}": {
+      "get": {
+        "summary": "Fetch an encrypted object",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Encrypted object",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EncryptedObject" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      },
+      "patch": {
+        "summary": "Replace ciphertext",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EncryptedObjectInput" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Updated" },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      },
+      "delete": {
+        "summary": "Delete an encrypted object",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/objects/{id}/related": {
+      "get": {
+        "summary": "List related encrypted objects",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of encrypted objects",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EncryptedObject" }
                 }
               }
             }
@@ -105,113 +433,220 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/api/objects/publish/{type}/{relatedId}": {
+      "put": {
+        "summary": "Publish an object to a logical type",
         "parameters": [
           {
-            "name": "id",
+            "name": "type",
             "in": "path",
-            "description": "ID of plant to delete",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "relatedId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
           }
         ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
+              "schema": { "$ref": "#/components/schemas/PublishRequest" }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+          "204": { "description": "Published" },
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      },
+      "delete": {
+        "summary": "Unpublish an object",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "relatedId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
           }
+        ],
+        "responses": {
+          "204": { "description": "Unpublished" }
         }
       }
     }
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "AuthInfo": {
         "type": "object",
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+          "id": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "phoneVerified": { "type": "boolean" },
+          "twoFactorPassed": { "type": "boolean" },
+          "twoFactorConfigured": { "type": "boolean" }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["ok", "phone_not_verified", "2fa_required", "error"]
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "token": { "type": "string", "description": "JWT returned on success" },
+          "message": { "type": "string" },
+          "auth": { "$ref": "#/components/schemas/AuthInfo" }
+        }
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["phone_not_verified"]
+          },
+          "token": { "type": "string" }
+        }
+      },
+      "ApiKey": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "key": {
+            "type": "string",
+            "description": "Plaintext is only returned immediately after creation"
+          },
+          "last_used_at": { "type": "string", "format": "date-time", "nullable": true },
+          "created_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "ApiKeyCreateRequest": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "description": "Friendly name displayed in the dashboard" }
+        }
+      },
+      "ServerSnapshot": {
+        "type": "object",
+        "properties": {
+          "current": { "type": "string" },
+          "keys": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "application/pkix-spki": { "type": "string" },
+                "application/jwk+json": { "type": "object" }
+              }
+            }
           }
         }
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
+      "RootServer": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "publicKey": { "type": "string" },
+          "privateKey": {
+            "type": "string",
+            "nullable": true,
+            "description": "Only returned when Telentir generated the keypair"
+          }
+        }
+      },
+      "StoreDescriptor": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "defaultKey": { "type": "string" }
+        }
+      },
+      "RootObject": {
+        "type": "object",
+        "properties": {
+          "stores": {
+            "type": "object",
+            "additionalProperties": { "$ref": "#/components/schemas/StoreDescriptor" }
           },
+          "servers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "publicKey": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "StoreKey": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "server": { "type": "string" },
+          "key": { "type": "string", "description": "Hex encoded AES key" },
+          "iv": { "type": "string", "description": "Hex encoded IV" },
+          "deprecated": { "type": "boolean" }
+        }
+      },
+      "EncryptedObjectInput": {
+        "type": "object",
+        "required": ["keyId", "content", "authTag"],
+        "properties": {
+          "keyId": { "type": "string" },
+          "content": { "type": "string", "description": "Base64 ciphertext" },
+          "authTag": { "type": "string", "description": "Base64 auth tag" },
+          "relatedId": { "type": "string", "nullable": true }
+        }
+      },
+      "EncryptedObject": {
+        "allOf": [
+          { "$ref": "#/components/schemas/EncryptedObjectInput" },
           {
-            "required": [
-              "id"
-            ],
             "type": "object",
             "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
+              "id": { "type": "string" },
+              "metadata": { "type": "object", "additionalProperties": true },
+              "created_at": { "type": "string", "format": "date-time" },
+              "updated_at": { "type": "string", "format": "date-time" }
             }
           }
         ]
       },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+      "PublishRequest": {
         "type": "object",
+        "required": ["objectId"],
         "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
+          "objectId": { "type": "string" }
+        }
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "Bad request or server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string" }
+              }
+            }
           }
         }
       }
@@ -219,7 +654,8 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

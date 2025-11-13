@@ -1,33 +1,75 @@
----
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'API overview'
+description: 'Understand how to interact with the Telentir platform APIs'
 ---
 
 <Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
+  Telentir’s APIs are served from the Next.js `telentir-web` project. All
+  examples below reference real route handlers in `/app/api`.
 </Note>
 
-## Welcome
+## Base URLs
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+| Environment | Base URL | Notes |
+| ----------- | -------- | ----- |
+| Production  | `https://app.telentir.com/api` | Same origin as the Telentir dashboard. |
+| Local dev   | `http://localhost:3000/api` | Available when you run `npm run dev` inside `telentir-web`. |
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+Every route documented in this section is relative to the base URL above. The
+API is versionless—breaking changes follow Telentir’s deprecation policy and
+are announced via the changelog.
 
-## Authentication
+## Authentication in two layers
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+1. **Workspace sessions**: Created via the auth endpoints (email + password,
+   2FA, phone verification). These return JWTs that the frontend stores in the
+   `token` cookie. You can also copy the token and send it as a `Bearer` header
+   for server-to-server work.
+2. **API keys**: Long‑lived keys generated from `/api/api-keys`. These keys are
+   accepted as bearer tokens everywhere the middleware `objectAuth` or `auth`
+   is used. Keys inherit the owner’s scopes (phone verification, 2FA, etc.).
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```
+Most data-plane routes (encrypted objects, connect, persona previews, session
+calls) use `objectAuth`, which additionally loads the user’s encrypted object
+store and enforces phone verification. Bring-your-own encryption keys are
+explained in [Encrypted objects](/api-reference/data-plane).
+
+## Typical workflow
+
+1. `POST /api/auth/login` to obtain a short-lived JWT or use an API key.
+2. `GET /api/root` to fetch server metadata, stores, and encryption keys.
+3. Mint store keys with `PUT /api/keys` and persist encrypted payloads through
+   `PUT /api/objects`.
+4. Subscribe to `GET /api/events/{type}` streams to mirror mutations or use
+   `/api/connect` to ingest data from Telentir-managed scrapers.
+5. Layer on voice/knowledge capabilities via the specialized endpoints listed
+   in the rest of the API reference.
+
+## Tooling and schema
+
+<CardGroup>
+  <Card
+    title="OpenAPI playground"
+    icon="code"
+    href="/api-reference/openapi.json"
+  >
+    Key auth + data-plane endpoints defined for quick prototyping.
+  </Card>
+  <Card
+    title="Authentication guide"
+    icon="lock"
+    href="/api-reference/authentication"
+  >
+    Covers login, phone verification, 2FA, API keys, and password resets.
+  </Card>
+  <Card
+    title="Encrypted objects"
+    icon="database"
+    href="/api-reference/data-plane"
+  >
+    Explains root objects, store keys, publish/unpublish, and event streams.
+  </Card>
+</CardGroup>
+
+Need to integrate voice, knowledge, billing, or automation features? Jump over
+to the dedicated pages listed in the sidebar. Each section links back to
+concrete files inside `telentir-web` so you can audit the exact server logic.

@@ -1,0 +1,74 @@
+---
+title: 'Billing, credits, and pricing'
+description: 'Stripe-backed credits, plan changes, and usage endpoints'
+---
+
+Telentir’s billing stack lives in `app/api/credits`, `app/api/billing`, and
+`app/api/pricing`. All routes require authentication; write operations also
+enforce phone verification.
+
+## Workspace credits
+
+### `GET /api/credits`
+
+Returns the current Stripe balance `{ amount, currency }`. Results are cached in
+Redis for 60 seconds (`stripe:balance:{customerId}`) to minimize API calls.
+
+Use this endpoint to display lead credit availability or to decide whether a
+lead fetch job can start.
+
+### `POST /api/credits/add`
+
+Initiates a self-serve top-up. Optional query `?returnTo=https://app.telentir.com/billing`
+forces Stripe to send users back to a specific screen.
+
+Response: `{ url }` – redirect the browser to finalize the purchase. The same
+helper powers the UI button labelled “Add credits”.
+
+## Subscription state
+
+### `GET /api/billing/state`
+
+Returns a merged view of the plan, metered usage, payment method status, and
+credit balance:
+
+```jsonc
+{
+  "plan": { "key": "growth", "priceUsd": 499, ... } | null,
+  "usage": {
+    "seconds_inbound": 120,
+    "seconds_outbound": 360,
+    "calls_inbound": 14,
+    "calls_outbound": 22,
+    "leads": 40
+  },
+  "hasCard": true,
+  "balance": { "currency": "usd", "amount": 0 }
+}
+```
+
+The usage numbers are clamped to each plan’s included quantities, matching what
+customers see on invoices.
+
+### `POST /api/billing/plan`
+
+Body `{ plan: string }` where `plan` is one of the keys in `lib/plans.ts`
+(`starter`, `growth`, etc.). Optional `mode: "upgrade"` switches the Stripe
+session to “update existing subscription”; otherwise a new subscription checkout
+is created.
+
+The API responds with `{ url }` – redirect to that Stripe Checkout page.
+
+### `GET /api/billing/portal`
+
+Provides the Stripe customer portal URL where the user can update cards, view
+invoices, or cancel a subscription. Accepts the same optional `returnTo` query
+parameter as `credits/add`.
+
+## Voice pricing snapshot
+
+`GET /api/pricing/voice-countries` exposes the cached output of
+`lib/country-pricing.ts`. The response contains per-country PSTN rates (pulled
+from Twilio) and is cached at the CDN layer for one hour
+(`Cache-Control: s-maxage=3600`). Use it to pre-calculate cost estimates when
+rendering number search results or showing rate cards.

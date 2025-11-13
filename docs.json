@@ -47,18 +47,29 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Core platform",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/introduction",
+              "api-reference/authentication",
+              "api-reference/data-plane"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Voice & messaging",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/communications"
+            ]
+          },
+          {
+            "group": "Knowledge & personas",
+            "pages": [
+              "api-reference/knowledge"
+            ]
+          },
+          {
+            "group": "Billing & usage",
+            "pages": [
+              "api-reference/billing"
             ]
           }
         ]

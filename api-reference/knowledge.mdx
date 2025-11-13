@@ -1,0 +1,128 @@
+---
+title: 'Knowledge & personas'
+description: 'Knowledge base ingestion, semantic search, persona previews, and external integrations'
+---
+
+## Knowledge bases
+
+All endpoints live in `app/api/knowledge-bases`. They require a verified user
+(`auth` middleware) and in most cases `requirePhoneVerification: true`.
+
+### `GET /api/knowledge-bases`
+
+Returns every knowledge base (`id`, `name`, `description`, timestamps).
+
+### `PUT /api/knowledge-bases`
+
+Body `{ name: string, description?: string }`. Creates a new KB shell with
+empty metadata and returns the inserted record.
+
+### `GET /api/knowledge-bases/{id}`
+
+Loads the KB plus a list of uploaded documents (`kb(...).listDocuments()`).
+
+### `PATCH /api/knowledge-bases/{id}`
+
+Body `{ name?: string, description?: string }`. Updates metadata only.
+
+### `DELETE /api/knowledge-bases/{id}`
+
+Removes the KB and iterates through all remote documents to delete them from the
+vector store (`kb(...).deleteDocument`). Use with caution—deletion is immediate.
+
+### Upload files
+
+`POST /api/knowledge-bases/{id}` accepts `multipart/form-data`:
+
+```
+------form
+Content-Disposition: form-data; name="files"; filename="faq.pdf"
+Content-Type: application/pdf
+```
+
+Large text-based files are chunked into ~200 KB slices to keep embeddings
+efficient. The response is the list of created documents.
+
+### Link crawler
+
+`POST /api/knowledge-bases/{id}/links` body `{ urls: string[] }`.
+
+The server fetches each URL (4 concurrent downloads, 15 s timeout), converts the
+response into `File` objects, batches them (5 at a time), and calls
+`kb(...).createDocuments`. Failed downloads are skipped but logged.
+
+### Semantic search
+
+`POST /api/knowledge-bases/{id}/search` body `{ text: string }`.
+
+Returns up to 5 matches from the KB’s vector store with their similarity scores
+and document metadata. Handy for grounding prompts or tool calls.
+
+### Delete a specific document
+
+`DELETE /api/knowledge-bases/{id}/{documentId}` removes one document by numeric
+ID.
+
+## Personas
+
+Routes under `app/api/persona` expose persona definitions stored in
+`lib/get-persona.ts`.
+
+### `GET /api/persona/{id}`
+
+Returns the persona JSON (voice instructions, description, provider-specific
+settings). Useful when composing call payloads or persona previews.
+
+### `GET /api/persona/list-external`
+
+If an ElevenLabs API key is configured (`ELEVENLABS_API_KEY`), this returns all
+available ElevenLabs voices converted into Telentir persona objects. When the
+key is missing or forbidden, the list is empty.
+
+### `POST /api/persona/{id}/play`
+
+Generates an encrypted audio preview for a persona so you can render “listen”
+buttons without exposing raw audio.
+
+Body:
+
+| Field | Description |
+| ----- | ----------- |
+| `server` | Which of your servers should decrypt the response. |
+| `jwt` | Signed payload verified against the same server. It must decrypt to `{ use: "persona-preview", textBase64?: string }`. |
+
+If `textBase64` is omitted, Telentir previews the persona’s default
+`description`. Depending on `persona.settings.type`, Telentir either
+calls OpenAI’s `gpt-4o-mini-tts` or ElevenLabs’ TTS API and then encrypts the
+audio buffer with your server keys. The JSON response contains `{ header, content }`
+ready to decrypt via `Server.decrypt`.
+
+## Integrations (Calendly & friends)
+
+`app/api/integrations` stores third-party credentials (currently Calendly) used
+by the orchestrator and integration functions surfaced in live calls.
+
+### `GET /api/integrations`
+
+Lists all integrations for the workspace. Token-like fields are masked on
+output (`ABCD...1234`) to avoid leaking secrets.
+
+### `PUT /api/integrations`
+
+Body `{ type: string, data: Record<string,string> }`. For Calendly, supply:
+
+| Field | Meaning |
+| ----- | ------- |
+| `accessToken` / `apiKey` / `token` / `pat` | Any of these keys is accepted; the resolver normalizes to `accessToken`. |
+| `eventTypeUrl` / `eventType` / `eventTypeSlug` | Identifies the scheduling template to use. |
+
+The backend validates the credentials (`resolveCalendlyIntegration`) and stores
+a sanitized payload containing `eventTypeUri`, `eventTypeSlug`, `eventTypeName`,
+`userUri`, and optional `schedulingUrl`.
+
+### `DELETE /api/integrations/{id}`
+
+Revokes a single integration record.
+
+Once saved, integrations are exposed through `lib/integration-functions.ts` and
+can be attached to call sessions (see `/api/session/call`).

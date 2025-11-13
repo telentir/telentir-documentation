@@ -1,0 +1,153 @@
+---
+title: 'Encrypted data plane'
+description: 'Root objects, keys, encrypted payloads, publish/unpublish, and ingestion'
+---
+
+All endpoints on this page rely on the `objectAuth` middleware. You must supply
+a phone-verified bearer token or API key so the server can hydrate your encrypted
+object store (`DatabaseObjectStore` + `rootObject` inside `telentir-web/lib`).
+
+## Root object & servers
+
+### `GET /api/root`
+
+Returns the user’s root object: the list of stores (`contacts`, `calls`,
+`agents`, `tasks`, `conversational-pathways`, `campaigns`,
+`sms-messages`, `performance-metrics`) and server metadata (public keys, default
+keys per store). The payload is pulled directly from `storeService.rootObject`.
+
+### `GET /api/server`
+
+Exposes the active Telentir server name and all public keys (SPKI + JWK) so
+clients can encrypt data for Telentir without downloading the full root object.
+
+### `GET /api/servers`
+
+Lists additional root servers you have registered (for multi-region or BYOK
+setups).
+
+### `POST /api/servers`
+
+Body:
+
+| Field | Type | Notes |
+| ----- | ---- | ----- |
+| `name` | `string` | Friendly label shown inside the UI. |
+| `mode` | `"generate"` or `"upload_public"` | Choose whether Telentir should generate a keypair or store an externally generated public key. |
+| `publicKey` | `string` | Required when `mode === "upload_public"`; must be base64 URL encoded SPKI. |
+
+`mode: "generate"` returns `{ publicKey, privateKey }` so you can download and
+store the private component. Telentir never stores user-provided private keys.
+
+## Store keys
+
+### `PUT /api/keys`
+
+Body: `{ server: string }` plus optional `{ key: string, iv: string }` if you
+are bringing your own AES key and IV (base64-encoded). When no key material is
+supplied, the server mints a new random key bound to the given server.
+
+Response: the new key ID (string). The AES key and IV are kept on the server but
+you can retrieve them once via `GET /api/keys/{id}`.
+
+### `GET /api/keys/{id}`
+
+Returns `{ id, server, key, iv, created_at, deprecated }`. The `key` and `iv`
+are hex-encoded for convenience. Use this when you need to decrypt an object
+outside of Telentir.
+
+### `DELETE /api/keys/{id}`
+
+Revokes a key (objects encrypted with it remain but the key metadata is removed
+from the store).
+
+## Objects API
+
+All object payloads are opaque to Telentir; the server simply stores encrypted
+bytes plus a small metadata envelope.
+
+### `PUT /api/objects`
+
+Body:
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| `keyId` | `string` | Which store key encrypts the payload. |
+| `content` | `string` | Base64 encoded ciphertext. |
+| `authTag` | `string` | Base64 encoded auth tag (GCM). |
+| `relatedId` | `string?` | Optional parent object ID used to build relations. |
+
+Response: the created object (ID, metadata, timestamps).
+
+### `GET /api/objects/{id}`
+
+Returns the raw object. The server converts the stored buffers into hex strings
+(`content`, `auth_tag`) so you can re-decrypt locally.
+
+### `PATCH /api/objects/{id}`
+
+Same body shape as `PUT /api/objects`; replaces the ciphertext in place.
+
+### `DELETE /api/objects/{id}`
+
+Removes the object and all of its relations.
+
+### `GET /api/objects/{id}/related`
+
+Returns every child object attached through `relatedId`. Payloads are encoded in
+hex the same way as `GET /api/objects/{id}`.
+
+## Publishing & routing
+
+### `PUT /api/objects/publish/{type}/{relatedId}`
+
+Body `{ objectId: string }`. Associates a published object with a logical type
+(`calls`, `contacts`, etc.) and a `relatedId`. Telentir uses this to surface
+domain objects in the dashboard.
+
+### `DELETE /api/objects/publish/{type}/{relatedId}`
+
+Unpublishes the object while keeping the ciphertext in storage.
+
+## Event streams
+
+`GET /api/events/{type}` streams Server-Sent Events (SSE). Supported `type`
+values map to the Redis patterns in `lib/redis-event-stream.ts`:
+
+| Type | Payload |
+| ---- | ------- |
+| `key_created`, `key_deleted` | `{ key_id, user_id, created_at/deleted_at }` |
+| `object_created` | `{ id, key_id, related_object_id?, content, auth_tag, metadata }` |
+| `object_updated` | `{ object_id, key_id, updated_at }` |
+| `object_deleted` | `{ object_id, deleted_at }` |
+| `publish`, `unpublish` | `{ type, related_id, object_id?, timestamp }` |
+
+Query parameters are forwarded as pattern filters (e.g.
+`/api/events/object_created?objectId=obj_123`). The response headers are set for
+long-lived SSE connections, so remember to keep the HTTP request open.
+
+## Connect ingestion jobs
+
+`POST /api/connect` lets you fan data in from Telentir-managed scrapers. Body:
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| `repository` | `string` | Must be one of `contacts`, `calls`, `agents`, `tasks`, `conversational-pathways`, `campaigns`, `sms-messages`, `performance-metrics`. |
+| `path` | `string` | The backend connector path (forwarded to `SCRAPER_HOSTNAME`). `/get-leads` enables lead harvesting with usage tracking. |
+| `params` | `object` | Arbitrary JSON forwarded to the connector worker. |
+
+What happens under the hood (`app/api/connect/route.ts`):
+
+1. The API spawns an HTTP streaming request to the scraper service (`path` +
+   `params`).
+2. Each SSE frame is parsed as JSON and written to the chosen encrypted
+   repository via `repository.create()`.
+3. When `path === "/get-leads"`, Telentir enforces lead credits:
+   - `params.credits` is clamped to the plan allowance + prepaid balance.
+   - Paid credits are reserved up-front via Stripe (`LeadCreditReservation`).
+   - Unused credits are refunded when the stream completes or fails.
+
+The endpoint itself returns `204` once the ingestion stream completes (or early
+if no allowance is available). Because the actual objects are created
+asynchronously, subscribe to the relevant `/api/events/object_created` stream to
+observe progress.

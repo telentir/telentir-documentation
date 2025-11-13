@@ -1,0 +1,147 @@
+---
+title: 'Voice, inbound, and messaging'
+description: 'Manage phone numbers, inbound routing, SMS, and live call sessions'
+---
+
+This section covers endpoints inside `app/api/phone-numbers`, `inbound-configurations`,
+`sms`, and `session`. All routes require a phone-verified bearer token.
+
+## Phone numbers
+
+### Search inventory
+
+- `GET /api/phone-numbers/search` → `["twilio"]` (provider slugs).
+- `GET /api/phone-numbers/search/{provider}/countries` → list of countries and
+  supported number types (`local`, `mobile`, `tollFree`, etc.).
+- `GET /api/phone-numbers/search/{provider}?country=US&type=local` returns
+  available numbers and their pricing. Each entry includes:
+
+  | Field | Description |
+  | ----- | ----------- |
+  | `name`, `phoneNumber` | Twilio metadata for display purposes. |
+  | `capabilities.voice/sms/mms` | Boolean flags. |
+  | `addressRequirements` | `"none"`, `"local"`, or `"foreign"` depending on regulations. |
+  | `price` | `{ currency, amount, jwt }`. The `jwt` encodes the SKU and is required when purchasing. |
+
+### Purchase & store addresses
+
+- `PUT /api/phone-numbers/address` with `{ street, city, region, postalCode, isoCountry, ... }`
+  creates a Twilio address SID you can reuse when buying regulated numbers.
+- `PUT /api/phone-numbers` expects `{ jwt: string }` (copied from the search
+  response) plus optional `description` and `addressSid`. The route:
+  1. Verifies that a default payment method exists (Stripe).
+  2. Reserves the number via Twilio.
+  3. Starts a Stripe subscription so the number stays active.
+  4. Returns the new Telentir phone ID.
+
+If the user has no card on file you’ll receive HTTP 409 and a Stripe Checkout
+URL in the response body.
+
+### Manage purchased numbers
+
+- `GET /api/phone-numbers` → list all numbers (type, friendly name, references,
+  inbound configuration attachment).
+- `GET /api/phone-numbers/{id}` → single record.
+- `PATCH /api/phone-numbers/{id}` body `{ name?: string, description?: string }`.
+- `DELETE /api/phone-numbers/{id}` cancels the Twilio number and its Stripe
+  subscription. Failure to cancel the subscription returns HTTP 502.
+
+## Inbound configurations
+
+`app/api/inbound-configurations` lets you map phone numbers to AI or human
+agents with optional knowledge bases.
+
+### `GET /api/inbound-configurations`
+
+Returns all configs for the user, expanding the `humanAgents` array from the
+stored metadata.
+
+### `PUT /api/inbound-configurations`
+
+Body (all required unless noted):
+
+| Field | Description |
+| ----- | ----------- |
+| `name` | Display label. |
+| `agent` | Object reference `{ id, type, ... }` pointing to an encrypted agent. |
+| `source` | Campaign source descriptor (same shape Telentir stores on campaigns). |
+| `humanAgents` | Optional array of human agent references; duplicates are stripped. |
+| `description?` | Text shown in the UI. |
+| `knowledge_base_id?` | Link to a knowledge base uploaded via `/api/knowledge-bases`. |
+
+### `GET /api/inbound-configurations/{id}`
+
+Returns a single config plus de-duplicated `humanAgents`.
+
+### `PUT /api/inbound-configurations/{id}`
+
+Updates name/agent/source/human agents. All new agent IDs are validated against
+the encrypted object store to ensure they exist.
+
+### `PATCH /api/inbound-configurations/{id}`
+
+Partial updates for `name`, `description`, `source`, and `humanAgents`.
+
+### `DELETE /api/inbound-configurations/{id}`
+
+Removes the config entirely.
+
+### Attach/detach numbers
+
+`POST /api/inbound-configurations/{id}` body `{ action: "attach"|"detach", phone_number_id }`.
+
+- `"attach"` requires the number’s `type` to be `"inbound"` or `"both"`.
+- `"detach"` only succeeds if the number is currently attached to the selected
+  configuration.
+
+## SMS
+
+### `POST /api/sms/messages`
+
+Body: `{ phoneNumberId: string, to: string, body: string }`.
+
+The route validates ownership of the `phoneNumberId`, forwards the SMS through
+Twilio, and stores Telentir’s webhook URL in `statusCallbackUrl` so delivery
+updates feed back into the dashboard. The response mirrors Twilio’s message SID
+and status.
+
+## Call sessions
+
+### `POST /api/session/call`
+
+This endpoint executes `lib/sessions.call` with the data embedded in an
+application-specific JWT. Body:
+
+| Field | Description |
+| ----- | ----------- |
+| `jwt` | Signed payload created by one of your registered servers. It must decrypt to `{ agent, contact, humanAgents?, pathway? }` (see below). |
+| `server` | Server ID (from `/api/servers`) used to verify and decrypt the JWT. |
+
+The decrypted payload must include:
+
+- `agent`: encrypted agent record (AI voice, voice settings, etc.).
+- `contact`: encrypted contact object for the callee.
+- Optional `humanAgents`: extra humans who will be conferenced in.
+- Either `{ type: "pathway", pathway: ConversationalPathway }` **or**
+  `{ type: "prompt", prompt: string }`.
+- Optional `knowledgeBase` metadata if you attach KB functions inside `getPrompt`.
+
+Telentir generates the LLM prompt (`getPrompt` + `getContactPrompt`), assembles
+available integration functions, and streams the call through the audio server.
+The HTTP response is empty (`204`) – monitor `/api/events` or your own webhooks
+for progress.
+
+### Temporary testing sessions
+
+Routes under `/api/session/temporary` let you spin up quick test calls without
+touching encrypted objects. They rely on Twilio and the preconfigured call types
+stored in `lib/call-types.ts`.
+
+| Endpoint | Description |
+| -------- | ----------- |
+| `GET /api/session/temporary` | Returns the list of available call type definitions (`types`). |
+| `PUT /api/session/temporary` | Body `{ phone: string, type: string }`. Sends a verification code via SMS and returns a signed `key`. |
+| `POST /api/session/temporary` | Body `{ key, code, email }`. Validates the code, reserves a temporary Telentir phone number, and kicks off a one-off outbound call using the requested call type. The response is the session ID. |
+
+Verification keys are single-use and expire after 10 minutes (enforced by the
+server-side cache in `session/temporary/route.ts`).
