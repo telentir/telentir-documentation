@@ -76,7 +76,8 @@
           }
         },
         "tags": [
-          "Authentication"
+          "Authentication",
+          "Endpoint - POST /api/auth/login"
         ]
       }
     },
@@ -145,7 +146,8 @@
           }
         },
         "tags": [
-          "Authentication"
+          "Authentication",
+          "Endpoint - POST /api/auth/register"
         ]
       }
     },
@@ -168,7 +170,8 @@
           }
         },
         "tags": [
-          "API Keys"
+          "API Keys",
+          "Endpoint - GET /api/api-keys"
         ]
       },
       "put": {
@@ -199,7 +202,8 @@
           }
         },
         "tags": [
-          "API Keys"
+          "API Keys",
+          "Endpoint - PUT /api/api-keys"
         ]
       }
     },
@@ -225,7 +229,8 @@
           }
         },
         "tags": [
-          "API Keys"
+          "API Keys",
+          "Endpoint - DELETE /api/api-keys/{id}"
         ]
       }
     },
@@ -245,7 +250,8 @@
           }
         },
         "tags": [
-          "Root"
+          "Root",
+          "Endpoint - GET /api/root"
         ]
       }
     },
@@ -265,7 +271,8 @@
           }
         },
         "tags": [
-          "Servers"
+          "Servers",
+          "Endpoint - GET /api/server"
         ]
       }
     },
@@ -288,7 +295,8 @@
           }
         },
         "tags": [
-          "Servers"
+          "Servers",
+          "Endpoint - GET /api/servers"
         ]
       },
       "post": {
@@ -339,7 +347,8 @@
           }
         },
         "tags": [
-          "Servers"
+          "Servers",
+          "Endpoint - POST /api/servers"
         ]
       }
     },
@@ -396,7 +405,8 @@
           }
         },
         "tags": [
-          "Keys"
+          "Keys",
+          "Endpoint - PUT /api/keys"
         ]
       }
     },
@@ -429,7 +439,8 @@
           }
         },
         "tags": [
-          "Keys"
+          "Keys",
+          "Endpoint - GET /api/keys/{id}"
         ]
       },
       "delete": {
@@ -453,7 +464,8 @@
           }
         },
         "tags": [
-          "Keys"
+          "Keys",
+          "Endpoint - DELETE /api/keys/{id}"
         ]
       }
     },
@@ -486,7 +498,8 @@
           }
         },
         "tags": [
-          "Objects"
+          "Objects",
+          "Endpoint - PUT /api/objects"
         ]
       }
     },
@@ -519,7 +532,8 @@
           }
         },
         "tags": [
-          "Objects"
+          "Objects",
+          "Endpoint - GET /api/objects/{id}"
         ]
       },
       "patch": {
@@ -553,7 +567,8 @@
           }
         },
         "tags": [
-          "Objects"
+          "Objects",
+          "Endpoint - PATCH /api/objects/{id}"
         ]
       },
       "delete": {
@@ -577,7 +592,8 @@
           }
         },
         "tags": [
-          "Objects"
+          "Objects",
+          "Endpoint - DELETE /api/objects/{id}"
         ]
       }
     },
@@ -610,7 +626,8 @@
           }
         },
         "tags": [
-          "Objects"
+          "Objects",
+          "Endpoint - GET /api/objects/{id}/related"
         ]
       }
     },
@@ -654,7 +671,8 @@
           }
         },
         "tags": [
-          "Objects"
+          "Objects",
+          "Endpoint - PUT /api/objects/publish/{type}/{relatedId}"
         ]
       },
       "delete": {
@@ -683,7 +701,8 @@
           }
         },
         "tags": [
-          "Objects"
+          "Objects",
+          "Endpoint - DELETE /api/objects/publish/{type}/{relatedId}"
         ]
       }
     },
@@ -691,7 +710,8 @@
       "get": {
         "summary": "Get auth status",
         "tags": [
-          "Authentication"
+          "Authentication",
+          "Endpoint - GET /api/auth"
         ],
         "responses": {
           "200": {
@@ -711,7 +731,8 @@
       "get": {
         "summary": "Log out",
         "tags": [
-          "Authentication"
+          "Authentication",
+          "Endpoint - GET /api/auth/logout"
         ],
         "responses": {
           "200": {
@@ -737,7 +758,8 @@
       "get": {
         "summary": "Subscribe to event stream",
         "tags": [
-          "Events"
+          "Events",
+          "Endpoint - GET /api/events/{type}"
         ],
         "parameters": [
           {
@@ -776,7 +798,8 @@
       "post": {
         "summary": "Run connector job",
         "tags": [
-          "Connect"
+          "Connect",
+          "Endpoint - POST /api/connect"
         ],
         "requestBody": {
           "required": true,
@@ -1144,6 +1167,98 @@
     {
       "name": "Connect",
       "description": "Data ingestion via connector jobs."
+    },
+    {
+      "name": "Endpoint - GET /api/auth",
+      "description": "Auto-generated tag for Endpoint - GET /api/auth."
+    },
+    {
+      "name": "Endpoint - POST /api/auth/login",
+      "description": "Auto-generated tag for Endpoint - POST /api/auth/login."
+    },
+    {
+      "name": "Endpoint - POST /api/auth/register",
+      "description": "Auto-generated tag for Endpoint - POST /api/auth/register."
+    },
+    {
+      "name": "Endpoint - GET /api/auth/logout",
+      "description": "Auto-generated tag for Endpoint - GET /api/auth/logout."
+    },
+    {
+      "name": "Endpoint - GET /api/api-keys",
+      "description": "Auto-generated tag for Endpoint - GET /api/api-keys."
+    },
+    {
+      "name": "Endpoint - PUT /api/api-keys",
+      "description": "Auto-generated tag for Endpoint - PUT /api/api-keys."
+    },
+    {
+      "name": "Endpoint - DELETE /api/api-keys/{id}",
+      "description": "Auto-generated tag for Endpoint - DELETE /api/api-keys/{id}."
+    },
+    {
+      "name": "Endpoint - GET /api/root",
+      "description": "Auto-generated tag for Endpoint - GET /api/root."
+    },
+    {
+      "name": "Endpoint - GET /api/server",
+      "description": "Auto-generated tag for Endpoint - GET /api/server."
+    },
+    {
+      "name": "Endpoint - GET /api/servers",
+      "description": "Auto-generated tag for Endpoint - GET /api/servers."
+    },
+    {
+      "name": "Endpoint - POST /api/servers",
+      "description": "Auto-generated tag for Endpoint - POST /api/servers."
+    },
+    {
+      "name": "Endpoint - PUT /api/keys",
+      "description": "Auto-generated tag for Endpoint - PUT /api/keys."
+    },
+    {
+      "name": "Endpoint - GET /api/keys/{id}",
+      "description": "Auto-generated tag for Endpoint - GET /api/keys/{id}."
+    },
+    {
+      "name": "Endpoint - DELETE /api/keys/{id}",
+      "description": "Auto-generated tag for Endpoint - DELETE /api/keys/{id}."
+    },
+    {
+      "name": "Endpoint - PUT /api/objects",
+      "description": "Auto-generated tag for Endpoint - PUT /api/objects."
+    },
+    {
+      "name": "Endpoint - GET /api/objects/{id}",
+      "description": "Auto-generated tag for Endpoint - GET /api/objects/{id}."
+    },
+    {
+      "name": "Endpoint - PATCH /api/objects/{id}",
+      "description": "Auto-generated tag for Endpoint - PATCH /api/objects/{id}."
+    },
+    {
+      "name": "Endpoint - DELETE /api/objects/{id}",
+      "description": "Auto-generated tag for Endpoint - DELETE /api/objects/{id}."
+    },
+    {
+      "name": "Endpoint - GET /api/objects/{id}/related",
+      "description": "Auto-generated tag for Endpoint - GET /api/objects/{id}/related."
+    },
+    {
+      "name": "Endpoint - PUT /api/objects/publish/{type}/{relatedId}",
+      "description": "Auto-generated tag for Endpoint - PUT /api/objects/publish/{type}/{relatedId}."
+    },
+    {
+      "name": "Endpoint - DELETE /api/objects/publish/{type}/{relatedId}",
+      "description": "Auto-generated tag for Endpoint - DELETE /api/objects/publish/{type}/{relatedId}."
+    },
+    {
+      "name": "Endpoint - GET /api/events/{type}",
+      "description": "Auto-generated tag for Endpoint - GET /api/events/{type}."
+    },
+    {
+      "name": "Endpoint - POST /api/connect",
+      "description": "Auto-generated tag for Endpoint - POST /api/connect."
     }
   ]
 }
