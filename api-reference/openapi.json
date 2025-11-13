@@ -6,11 +6,17 @@
     "version": "2025-11-13"
   },
   "servers": [
-    { "url": "https://app.telentir.com" },
-    { "url": "http://localhost:3000" }
+    {
+      "url": "https://app.telentir.com"
+    },
+    {
+      "url": "http://localhost:3000"
+    }
   ],
   "security": [
-    { "bearerAuth": [] }
+    {
+      "bearerAuth": []
+    }
   ],
   "seo": {
     "metatags": {
@@ -31,11 +37,24 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["email", "password", "remember"],
+                "required": [
+                  "email",
+                  "password",
+                  "remember"
+                ],
                 "properties": {
-                  "email": { "type": "string", "format": "email" },
-                  "password": { "type": "string", "format": "password" },
-                  "remember": { "type": "boolean", "default": false }
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "remember": {
+                    "type": "boolean",
+                    "default": false
+                  }
                 }
               }
             }
@@ -46,12 +65,19 @@
             "description": "Login status",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/LoginResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/Error" }
-        }
+          "400": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
       }
     },
     "/api/auth/register": {
@@ -73,13 +99,31 @@
                   "remember"
                 ],
                 "properties": {
-                  "firstName": { "type": "string" },
-                  "lastName": { "type": "string" },
-                  "email": { "type": "string", "format": "email" },
-                  "phone": { "type": "string" },
-                  "password": { "type": "string", "format": "password" },
-                  "confirmPassword": { "type": "string", "format": "password" },
-                  "remember": { "type": "boolean", "default": true }
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "confirmPassword": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "remember": {
+                    "type": "boolean",
+                    "default": true
+                  }
                 }
               }
             }
@@ -90,12 +134,19 @@
             "description": "Registration status",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/RegisterResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponse"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/Error" }
-        }
+          "400": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
       }
     },
     "/api/api-keys": {
@@ -108,12 +159,17 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ApiKey" }
+                  "items": {
+                    "$ref": "#/components/schemas/ApiKey"
+                  }
                 }
               }
             }
           }
-        }
+        },
+        "tags": [
+          "API Keys"
+        ]
       },
       "put": {
         "summary": "Create an API key",
@@ -121,7 +177,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ApiKeyCreateRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/ApiKeyCreateRequest"
+              }
             }
           }
         },
@@ -130,12 +188,19 @@
             "description": "New key (plaintext is returned once)",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiKey" }
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKey"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/Error" }
-        }
+          "400": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "API Keys"
+        ]
       }
     },
     "/api/api-keys/{id}": {
@@ -146,13 +211,22 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "204": { "description": "Key deleted" },
-          "404": { "$ref": "#/components/responses/Error" }
-        }
+          "204": {
+            "description": "Key deleted"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "API Keys"
+        ]
       }
     },
     "/api/root": {
@@ -163,11 +237,16 @@
             "description": "Root object describing stores and servers",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/RootObject" }
+                "schema": {
+                  "$ref": "#/components/schemas/RootObject"
+                }
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Root"
+        ]
       }
     },
     "/api/server": {
@@ -178,11 +257,16 @@
             "description": "Server snapshot",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ServerSnapshot" }
+                "schema": {
+                  "$ref": "#/components/schemas/ServerSnapshot"
+                }
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Servers"
+        ]
       }
     },
     "/api/servers": {
@@ -195,12 +279,17 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/RootServer" }
+                  "items": {
+                    "$ref": "#/components/schemas/RootServer"
+                  }
                 }
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Servers"
+        ]
       },
       "post": {
         "summary": "Register a root server",
@@ -210,12 +299,20 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["name", "mode"],
+                "required": [
+                  "name",
+                  "mode"
+                ],
                 "properties": {
-                  "name": { "type": "string" },
+                  "name": {
+                    "type": "string"
+                  },
                   "mode": {
                     "type": "string",
-                    "enum": ["generate", "upload_public"]
+                    "enum": [
+                      "generate",
+                      "upload_public"
+                    ]
                   },
                   "publicKey": {
                     "type": "string",
@@ -231,12 +328,19 @@
             "description": "Server record and public key material",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/RootServer" }
+                "schema": {
+                  "$ref": "#/components/schemas/RootServer"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/Error" }
-        }
+          "400": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "Servers"
+        ]
       }
     },
     "/api/keys": {
@@ -248,9 +352,13 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["server"],
+                "required": [
+                  "server"
+                ],
                 "properties": {
-                  "server": { "type": "string" },
+                  "server": {
+                    "type": "string"
+                  },
                   "key": {
                     "type": "string",
                     "description": "Base64 encoded AES key (optional)"
@@ -271,15 +379,25 @@
               "application/json": {
                 "schema": {
                   "oneOf": [
-                    { "type": "string", "description": "Key ID" },
-                    { "$ref": "#/components/schemas/StoreKey" }
+                    {
+                      "type": "string",
+                      "description": "Key ID"
+                    },
+                    {
+                      "$ref": "#/components/schemas/StoreKey"
+                    }
                   ]
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/Error" }
-        }
+          "400": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "Keys"
+        ]
       }
     },
     "/api/keys/{id}": {
@@ -290,7 +408,9 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -298,12 +418,19 @@
             "description": "Stored key information",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/StoreKey" }
+                "schema": {
+                  "$ref": "#/components/schemas/StoreKey"
+                }
               }
             }
           },
-          "404": { "$ref": "#/components/responses/Error" }
-        }
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "Keys"
+        ]
       },
       "delete": {
         "summary": "Delete a key",
@@ -312,13 +439,22 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "204": { "description": "Deleted" },
-          "404": { "$ref": "#/components/responses/Error" }
-        }
+          "204": {
+            "description": "Deleted"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "Keys"
+        ]
       }
     },
     "/api/objects": {
@@ -328,7 +464,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/EncryptedObjectInput" }
+              "schema": {
+                "$ref": "#/components/schemas/EncryptedObjectInput"
+              }
             }
           }
         },
@@ -337,12 +475,19 @@
             "description": "Persisted object",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/EncryptedObject" }
+                "schema": {
+                  "$ref": "#/components/schemas/EncryptedObject"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/Error" }
-        }
+          "400": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "Objects"
+        ]
       }
     },
     "/api/objects/{id}": {
@@ -353,7 +498,9 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -361,12 +508,19 @@
             "description": "Encrypted object",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/EncryptedObject" }
+                "schema": {
+                  "$ref": "#/components/schemas/EncryptedObject"
+                }
               }
             }
           },
-          "404": { "$ref": "#/components/responses/Error" }
-        }
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "Objects"
+        ]
       },
       "patch": {
         "summary": "Replace ciphertext",
@@ -375,21 +529,32 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/EncryptedObjectInput" }
+              "schema": {
+                "$ref": "#/components/schemas/EncryptedObjectInput"
+              }
             }
           }
         },
         "responses": {
-          "204": { "description": "Updated" },
-          "404": { "$ref": "#/components/responses/Error" }
-        }
+          "204": {
+            "description": "Updated"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "Objects"
+        ]
       },
       "delete": {
         "summary": "Delete an encrypted object",
@@ -398,13 +563,22 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "204": { "description": "Deleted" },
-          "404": { "$ref": "#/components/responses/Error" }
-        }
+          "204": {
+            "description": "Deleted"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "Objects"
+        ]
       }
     },
     "/api/objects/{id}/related": {
@@ -415,7 +589,9 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -425,12 +601,17 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/EncryptedObject" }
+                  "items": {
+                    "$ref": "#/components/schemas/EncryptedObject"
+                  }
                 }
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Objects"
+        ]
       }
     },
     "/api/objects/publish/{type}/{relatedId}": {
@@ -441,27 +622,40 @@
             "name": "type",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "relatedId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/PublishRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/PublishRequest"
+              }
             }
           }
         },
         "responses": {
-          "204": { "description": "Published" },
-          "400": { "$ref": "#/components/responses/Error" }
-        }
+          "204": {
+            "description": "Published"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "tags": [
+          "Objects"
+        ]
       },
       "delete": {
         "summary": "Unpublish an object",
@@ -470,17 +664,134 @@
             "name": "type",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "relatedId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "204": { "description": "Unpublished" }
+          "204": {
+            "description": "Unpublished"
+          }
+        },
+        "tags": [
+          "Objects"
+        ]
+      }
+    },
+    "/api/auth": {
+      "get": {
+        "summary": "Get auth status",
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "Current auth state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "get": {
+        "summary": "Log out",
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "Logout confirmation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "logout"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/events/{type}": {
+      "get": {
+        "summary": "Subscribe to event stream",
+        "tags": [
+          "Events"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "key_created",
+                "key_deleted",
+                "object_created",
+                "object_updated",
+                "object_deleted",
+                "publish",
+                "unpublish"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SSE stream",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/connect": {
+      "post": {
+        "summary": "Run connector job",
+        "tags": [
+          "Connect"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Job accepted"
+          }
         }
       }
     }
@@ -490,13 +801,28 @@
       "AuthInfo": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "email": { "type": "string", "format": "email" },
-          "firstName": { "type": "string" },
-          "lastName": { "type": "string" },
-          "phoneVerified": { "type": "boolean" },
-          "twoFactorPassed": { "type": "boolean" },
-          "twoFactorConfigured": { "type": "boolean" }
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "phoneVerified": {
+            "type": "boolean"
+          },
+          "twoFactorPassed": {
+            "type": "boolean"
+          },
+          "twoFactorConfigured": {
+            "type": "boolean"
+          }
         }
       },
       "LoginResponse": {
@@ -504,11 +830,23 @@
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["ok", "phone_not_verified", "2fa_required", "error"]
+            "enum": [
+              "ok",
+              "phone_not_verified",
+              "2fa_required",
+              "error"
+            ]
           },
-          "token": { "type": "string", "description": "JWT returned on success" },
-          "message": { "type": "string" },
-          "auth": { "$ref": "#/components/schemas/AuthInfo" }
+          "token": {
+            "type": "string",
+            "description": "JWT returned on success"
+          },
+          "message": {
+            "type": "string"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthInfo"
+          }
         }
       },
       "RegisterResponse": {
@@ -516,42 +854,69 @@
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["phone_not_verified"]
+            "enum": [
+              "phone_not_verified"
+            ]
           },
-          "token": { "type": "string" }
+          "token": {
+            "type": "string"
+          }
         }
       },
       "ApiKey": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
           "key": {
             "type": "string",
             "description": "Plaintext is only returned immediately after creation"
           },
-          "last_used_at": { "type": "string", "format": "date-time", "nullable": true },
-          "created_at": { "type": "string", "format": "date-time", "nullable": true }
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
         }
       },
       "ApiKeyCreateRequest": {
         "type": "object",
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "properties": {
-          "name": { "type": "string", "description": "Friendly name displayed in the dashboard" }
+          "name": {
+            "type": "string",
+            "description": "Friendly name displayed in the dashboard"
+          }
         }
       },
       "ServerSnapshot": {
         "type": "object",
         "properties": {
-          "current": { "type": "string" },
+          "current": {
+            "type": "string"
+          },
           "keys": {
             "type": "object",
             "additionalProperties": {
               "type": "object",
               "properties": {
-                "application/pkix-spki": { "type": "string" },
-                "application/jwk+json": { "type": "object" }
+                "application/pkix-spki": {
+                  "type": "string"
+                },
+                "application/jwk+json": {
+                  "type": "object"
+                }
               }
             }
           }
@@ -560,8 +925,12 @@
       "RootServer": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "publicKey": { "type": "string" },
+          "name": {
+            "type": "string"
+          },
+          "publicKey": {
+            "type": "string"
+          },
           "privateKey": {
             "type": "string",
             "nullable": true,
@@ -572,8 +941,12 @@
       "StoreDescriptor": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "defaultKey": { "type": "string" }
+          "id": {
+            "type": "string"
+          },
+          "defaultKey": {
+            "type": "string"
+          }
         }
       },
       "RootObject": {
@@ -581,14 +954,18 @@
         "properties": {
           "stores": {
             "type": "object",
-            "additionalProperties": { "$ref": "#/components/schemas/StoreDescriptor" }
+            "additionalProperties": {
+              "$ref": "#/components/schemas/StoreDescriptor"
+            }
           },
           "servers": {
             "type": "object",
             "additionalProperties": {
               "type": "object",
               "properties": {
-                "publicKey": { "type": "string" }
+                "publicKey": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -597,42 +974,116 @@
       "StoreKey": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "server": { "type": "string" },
-          "key": { "type": "string", "description": "Hex encoded AES key" },
-          "iv": { "type": "string", "description": "Hex encoded IV" },
-          "deprecated": { "type": "boolean" }
+          "id": {
+            "type": "string"
+          },
+          "server": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string",
+            "description": "Hex encoded AES key"
+          },
+          "iv": {
+            "type": "string",
+            "description": "Hex encoded IV"
+          },
+          "deprecated": {
+            "type": "boolean"
+          }
         }
       },
       "EncryptedObjectInput": {
         "type": "object",
-        "required": ["keyId", "content", "authTag"],
+        "required": [
+          "keyId",
+          "content",
+          "authTag"
+        ],
         "properties": {
-          "keyId": { "type": "string" },
-          "content": { "type": "string", "description": "Base64 ciphertext" },
-          "authTag": { "type": "string", "description": "Base64 auth tag" },
-          "relatedId": { "type": "string", "nullable": true }
+          "keyId": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string",
+            "description": "Base64 ciphertext"
+          },
+          "authTag": {
+            "type": "string",
+            "description": "Base64 auth tag"
+          },
+          "relatedId": {
+            "type": "string",
+            "nullable": true
+          }
         }
       },
       "EncryptedObject": {
         "allOf": [
-          { "$ref": "#/components/schemas/EncryptedObjectInput" },
+          {
+            "$ref": "#/components/schemas/EncryptedObjectInput"
+          },
           {
             "type": "object",
             "properties": {
-              "id": { "type": "string" },
-              "metadata": { "type": "object", "additionalProperties": true },
-              "created_at": { "type": "string", "format": "date-time" },
-              "updated_at": { "type": "string", "format": "date-time" }
+              "id": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              }
             }
           }
         ]
       },
       "PublishRequest": {
         "type": "object",
-        "required": ["objectId"],
+        "required": [
+          "objectId"
+        ],
         "properties": {
-          "objectId": { "type": "string" }
+          "objectId": {
+            "type": "string"
+          }
+        }
+      },
+      "ConnectRequest": {
+        "type": "object",
+        "required": [
+          "repository",
+          "path",
+          "params"
+        ],
+        "properties": {
+          "repository": {
+            "type": "string",
+            "enum": [
+              "contacts",
+              "calls",
+              "agents",
+              "tasks",
+              "conversational-pathways",
+              "campaigns",
+              "sms-messages",
+              "performance-metrics"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": true
+          }
         }
       }
     },
@@ -644,7 +1095,9 @@
             "schema": {
               "type": "object",
               "properties": {
-                "message": { "type": "string" }
+                "message": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -658,5 +1111,39 @@
         "bearerFormat": "JWT"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Session status, login, register, logout."
+    },
+    {
+      "name": "API Keys",
+      "description": "Create, list, and delete Telentir API keys."
+    },
+    {
+      "name": "Root",
+      "description": "Root object metadata and stores."
+    },
+    {
+      "name": "Servers",
+      "description": "Server metadata and BYOK registration."
+    },
+    {
+      "name": "Keys",
+      "description": "Manage encryption keys."
+    },
+    {
+      "name": "Objects",
+      "description": "Encrypted object CRUD and publish actions."
+    },
+    {
+      "name": "Events",
+      "description": "Server-sent events for key/object/publish changes."
+    },
+    {
+      "name": "Connect",
+      "description": "Data ingestion via connector jobs."
+    }
+  ]
 }
