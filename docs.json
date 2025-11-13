@@ -57,6 +57,34 @@
             ]
           },
           {
+            "group": "Endpoint details",
+            "pages": [
+              "api-reference/endpoints/get-auth",
+              "api-reference/endpoints/post-auth-login",
+              "api-reference/endpoints/post-auth-register",
+              "api-reference/endpoints/get-auth-logout",
+              "api-reference/endpoints/get-api-keys",
+              "api-reference/endpoints/put-api-keys",
+              "api-reference/endpoints/delete-api-keys-id",
+              "api-reference/endpoints/get-root",
+              "api-reference/endpoints/get-server",
+              "api-reference/endpoints/get-servers",
+              "api-reference/endpoints/post-servers",
+              "api-reference/endpoints/put-keys",
+              "api-reference/endpoints/get-keys-id",
+              "api-reference/endpoints/delete-keys-id",
+              "api-reference/endpoints/put-objects",
+              "api-reference/endpoints/get-objects-id",
+              "api-reference/endpoints/patch-objects-id",
+              "api-reference/endpoints/delete-objects-id",
+              "api-reference/endpoints/get-objects-id-related",
+              "api-reference/endpoints/put-objects-publish",
+              "api-reference/endpoints/delete-objects-publish",
+              "api-reference/endpoints/get-events-type",
+              "api-reference/endpoints/post-connect"
+            ]
+          },
+          {
             "group": "Voice & messaging",
             "pages": [
               "api-reference/communications"
