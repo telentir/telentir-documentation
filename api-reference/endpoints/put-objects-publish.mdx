@@ -1,0 +1,105 @@
+---
+title: 'PUT /api/objects/publish/{type}/{relatedId}'
+description: 'Publish an object under a logical type.'
+---
+
+<div class="endpoint-grid">
+  <section>
+
+### Endpoint
+
+| Method | Path |
+| ------ | ---- |
+| `PUT`  | `/api/objects/publish/{type}/{relatedId}` |
+
+Associates an object with a publish slot so it can be surfaced in UI modules.
+
+## Authorization
+
+- Requires bearer token / API key with phone verification.
+
+## Path parameters
+
+| Param | Type | Description |
+| ----- | ---- | ----------- |
+| `type` | string | Logical collection name (e.g., `contacts`). |
+| `relatedId` | string | Unique slug per published record. |
+
+## Body
+
+| Field | Type | Required | Description |
+| ----- | ---- | -------- | ----------- |
+| `objectId` | string | Yes | ID of the encrypted object to publish. |
+
+## Response
+
+HTTP `204 No Content`.
+
+<details class="try-it">
+  <summary>Try it</summary>
+
+```bash
+curl https://app.telentir.com/api/objects/publish/contacts/contact_123 \
+  -X PUT \
+  -H "Authorization: Bearer $TELENTIR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"objectId":"obj_123"}'
+```
+</details>
+
+  </section>
+  <aside>
+    <h3>Examples</h3>
+    <h4>cURL</h4>
+
+```bash
+curl https://app.telentir.com/api/objects/publish/contacts/contact_123 \
+  -X PUT \
+  -H "Authorization: Bearer $TELENTIR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"objectId":"obj_123"}'
+```
+
+    <h4>JavaScript (fetch)</h4>
+
+```javascript
+await fetch('https://app.telentir.com/api/objects/publish/contacts/contact_123', {
+  method: 'PUT',
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ objectId: 'obj_123' }),
+});
+```
+
+    <h4>Sample response</h4>
+
+```text
+204 No Content
+```
+  </aside>
+</div>
+
+<style>
+.endpoint-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+.endpoint-grid aside {
+  border-left: 1px solid var(--mint-border, #e5e7eb);
+  padding-left: 1rem;
+}
+details.try-it {
+  margin-top: 1rem;
+  border: 1px solid var(--mint-border, #e5e7eb);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--mint-bg-muted, #fafafa);
+}
+details.try-it > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+</style>

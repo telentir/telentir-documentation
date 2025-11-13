@@ -1,0 +1,101 @@
+---
+title: 'GET /api/objects/{id}/related'
+description: 'List related encrypted child objects.'
+---
+
+<div class="endpoint-grid">
+  <section>
+
+### Endpoint
+
+| Method | Path |
+| ------ | ---- |
+| `GET`  | `/api/objects/{id}/related` |
+
+Returns the objects linked via `relatedId`.
+
+## Authorization
+
+- Requires bearer token / API key with phone verification.
+
+## Path parameters
+
+| Param | Type | Description |
+| ----- | ---- | ----------- |
+| `id` | string | Parent object ID. |
+
+## Body
+
+_Not applicable._
+
+## Response
+
+```jsonc
+[
+  {
+    "id": "obj_child",
+    "key_id": "key_123",
+    "content": "4f2a...",
+    "auth_tag": "9caa..."
+  }
+]
+```
+
+<details class="try-it">
+  <summary>Try it</summary>
+
+```bash
+curl https://app.telentir.com/api/objects/obj_parent/related \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+```
+</details>
+
+  </section>
+  <aside>
+    <h3>Examples</h3>
+    <h4>cURL</h4>
+
+```bash
+curl https://app.telentir.com/api/objects/obj_parent/related \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+```
+
+    <h4>JavaScript (fetch)</h4>
+
+```javascript
+const res = await fetch('https://app.telentir.com/api/objects/obj_parent/related', {
+  headers: { Authorization: `Bearer ${token}` },
+});
+const related = await res.json();
+```
+
+    <h4>Sample response</h4>
+
+```json
+[{"id":"obj_child","key_id":"key_123","content":"4f2a","auth_tag":"9caa"}]
+```
+  </aside>
+</div>
+
+<style>
+.endpoint-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+.endpoint-grid aside {
+  border-left: 1px solid var(--mint-border, #e5e7eb);
+  padding-left: 1rem;
+}
+details.try-it {
+  margin-top: 1rem;
+  border: 1px solid var(--mint-border, #e5e7eb);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--mint-bg-muted, #fafafa);
+}
+details.try-it > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+</style>

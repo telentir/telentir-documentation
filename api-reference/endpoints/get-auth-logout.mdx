@@ -1,0 +1,89 @@
+---
+title: 'GET /api/auth/logout'
+description: 'Clear the Telentir session cookie.'
+---
+
+<div class="endpoint-grid">
+  <section>
+
+### Endpoint
+
+| Method | Path |
+| ------ | ---- |
+| `GET`  | `/api/auth/logout` |
+
+Flushes the `token` cookie and returns a simple status payload.
+
+## Authorization
+
+- Requires a valid session cookie or bearer token so the logout can target the right user.
+- Phone verification not required.
+
+## Body
+
+_Not applicable._
+
+## Response
+
+```json
+{"status":"logout"}
+```
+
+<details class="try-it">
+  <summary>Try it</summary>
+
+```bash
+curl https://app.telentir.com/api/auth/logout \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+```
+</details>
+
+  </section>
+  <aside>
+    <h3>Examples</h3>
+    <h4>cURL</h4>
+
+```bash
+curl https://app.telentir.com/api/auth/logout \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+```
+
+    <h4>JavaScript (fetch)</h4>
+
+```javascript
+await fetch('https://app.telentir.com/api/auth/logout', {
+  headers: { Authorization: `Bearer ${token}` },
+  credentials: 'include',
+});
+```
+
+    <h4>Sample response</h4>
+
+```json
+{"status":"logout"}
+```
+  </aside>
+</div>
+
+<style>
+.endpoint-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+.endpoint-grid aside {
+  border-left: 1px solid var(--mint-border, #e5e7eb);
+  padding-left: 1rem;
+}
+details.try-it {
+  margin-top: 1rem;
+  border: 1px solid var(--mint-border, #e5e7eb);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--mint-bg-muted, #fafafa);
+}
+details.try-it > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+</style>

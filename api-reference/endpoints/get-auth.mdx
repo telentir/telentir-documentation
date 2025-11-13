@@ -1,0 +1,100 @@
+---
+title: 'GET /api/auth'
+description: 'Check the current Telentir session status.'
+---
+
+<div class="endpoint-grid">
+  <section>
+
+### Endpoint
+
+| Method | Path |
+| ------ | ---- |
+| `GET`  | `/api/auth` |
+
+Use this endpoint to introspect the session tied to your cookie or bearer token. It mirrors `app/api/auth/route.ts`.
+
+## Authorization
+
+- Accepts Telentir workspace JWT or API key.
+- Phone verification **not** required.
+
+## Body
+
+_No request body is accepted._
+
+## Response
+
+```jsonc
+{
+  "status": "ok",
+  "auth": {
+    "id": "user_123",
+    "email": "ops@telentir.com",
+    "firstName": "Ava",
+    "lastName": "Nguyen",
+    "phoneVerified": true,
+    "twoFactorConfigured": true,
+    "twoFactorPassed": true
+  }
+}
+```
+
+<details class="try-it">
+  <summary>Try it</summary>
+
+```bash
+curl https://app.telentir.com/api/auth \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+```
+</details>
+
+  </section>
+  <aside>
+    <h3>Examples</h3>
+    <h4>cURL</h4>
+
+```bash
+curl https://app.telentir.com/api/auth \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+```
+
+    <h4>JavaScript (fetch)</h4>
+
+```javascript
+const res = await fetch('https://app.telentir.com/api/auth', {
+  headers: { Authorization: `Bearer ${process.env.TELENTIR_TOKEN}` },
+});
+const data = await res.json();
+```
+
+    <h4>Sample response</h4>
+
+```json
+{"status":"ok","auth":{"id":"user_123","email":"ops@telentir.com","firstName":"Ava","lastName":"Nguyen","phoneVerified":true,"twoFactorConfigured":true,"twoFactorPassed":true}}
+```
+  </aside>
+</div>
+
+<style>
+.endpoint-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+.endpoint-grid aside {
+  border-left: 1px solid var(--mint-border, #e5e7eb);
+  padding-left: 1rem;
+}
+details.try-it {
+  margin-top: 1rem;
+  border: 1px solid var(--mint-border, #e5e7eb);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--mint-bg-muted, #fafafa);
+}
+details.try-it > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+</style>

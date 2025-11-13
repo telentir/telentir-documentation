@@ -1,0 +1,113 @@
+---
+title: 'PUT /api/keys'
+description: 'Mint or upload a store key.'
+---
+
+<div class="endpoint-grid">
+  <section>
+
+### Endpoint
+
+| Method | Path |
+| ------ | ---- |
+| `PUT`  | `/api/keys` |
+
+Creates a new AES key for encrypting objects against a server.
+
+## Authorization
+
+- Requires bearer token / API key.
+- Phone verification enforced via `objectAuth`.
+
+## Body
+
+| Field | Type | Required | Description |
+| ----- | ---- | -------- | ----------- |
+| `server` | string | Yes | ID of the server returned by `/api/servers`. |
+| `key` | string | Conditional | Base64 key bytes when uploading an existing key. |
+| `iv` | string | Conditional | Base64 IV; required when supplying `key`. |
+
+## Response
+
+- When Telentir generates the key, response is a string ID (`"key_123"`).
+- When uploading, you receive the published key record:
+
+```jsonc
+{
+  "id": "key_123",
+  "server": "primary",
+  "key": "a1b2c3...",
+  "iv": "d4e5f6...",
+  "deprecated": false
+}
+```
+
+<details class="try-it">
+  <summary>Try it</summary>
+
+```bash
+curl https://app.telentir.com/api/keys \
+  -X PUT \
+  -H "Authorization: Bearer $TELENTIR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"server":"primary"}'
+```
+</details>
+
+  </section>
+  <aside>
+    <h3>Examples</h3>
+    <h4>cURL</h4>
+
+```bash
+curl https://app.telentir.com/api/keys \
+  -X PUT \
+  -H "Authorization: Bearer $TELENTIR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"server":"primary"}'
+```
+
+    <h4>JavaScript (fetch)</h4>
+
+```javascript
+const res = await fetch('https://app.telentir.com/api/keys', {
+  method: 'PUT',
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ server: 'primary' }),
+});
+const keyIdOrRecord = await res.json();
+```
+
+    <h4>Sample response</h4>
+
+```json
+{"id":"key_123","server":"primary","key":"a1b2c3","iv":"d4e5f6","deprecated":false}
+```
+  </aside>
+</div>
+
+<style>
+.endpoint-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+.endpoint-grid aside {
+  border-left: 1px solid var(--mint-border, #e5e7eb);
+  padding-left: 1rem;
+}
+details.try-it {
+  margin-top: 1rem;
+  border: 1px solid var(--mint-border, #e5e7eb);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--mint-bg-muted, #fafafa);
+}
+details.try-it > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+</style>

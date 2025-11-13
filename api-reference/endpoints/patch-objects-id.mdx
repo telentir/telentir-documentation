@@ -1,0 +1,106 @@
+---
+title: 'PATCH /api/objects/{id}'
+description: 'Replace the ciphertext for an existing object.'
+---
+
+<div class="endpoint-grid">
+  <section>
+
+### Endpoint
+
+| Method | Path |
+| ------ | ---- |
+| `PATCH` | `/api/objects/{id}` |
+
+Updates the content for an object without changing its ID.
+
+## Authorization
+
+- Requires bearer token / API key with phone verification.
+
+## Path parameters
+
+| Param | Type | Description |
+| ----- | ---- | ----------- |
+| `id` | string | Object ID to overwrite. |
+
+## Body
+
+| Field | Type | Required | Description |
+| ----- | ---- | -------- | ----------- |
+| `keyId` | string | Yes | Store key to encrypt with. |
+| `content` | string | Yes | Base64 ciphertext. |
+| `authTag` | string | Yes | Base64 auth tag. |
+
+## Response
+
+HTTP `204 No Content`.
+
+<details class="try-it">
+  <summary>Try it</summary>
+
+```bash
+curl https://app.telentir.com/api/objects/obj_123 \
+  -X PATCH \
+  -H "Authorization: Bearer $TELENTIR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"keyId":"key_123","content":"newCipher==","authTag":"newTag=="}'
+```
+</details>
+
+  </section>
+  <aside>
+    <h3>Examples</h3>
+    <h4>cURL</h4>
+
+```bash
+curl https://app.telentir.com/api/objects/obj_123 \
+  -X PATCH \
+  -H "Authorization: Bearer $TELENTIR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"keyId":"key_123","content":"newCipher==","authTag":"newTag=="}'
+```
+
+    <h4>JavaScript (fetch)</h4>
+
+```javascript
+await fetch('https://app.telentir.com/api/objects/obj_123', {
+  method: 'PATCH',
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ keyId: 'key_123', content: 'newCipher==', authTag: 'newTag==' }),
+});
+```
+
+    <h4>Sample response</h4>
+
+```text
+204 No Content
+```
+  </aside>
+</div>
+
+<style>
+.endpoint-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+.endpoint-grid aside {
+  border-left: 1px solid var(--mint-border, #e5e7eb);
+  padding-left: 1rem;
+}
+details.try-it {
+  margin-top: 1rem;
+  border: 1px solid var(--mint-border, #e5e7eb);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--mint-bg-muted, #fafafa);
+}
+details.try-it > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+</style>

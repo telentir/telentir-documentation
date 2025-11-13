@@ -1,0 +1,107 @@
+---
+title: 'POST /api/auth/login'
+description: 'Sign user into Telentir and receive a JWT.'
+---
+
+<div class="endpoint-grid">
+  <section>
+
+### Endpoint
+
+| Method | Path |
+| ------ | ---- |
+| `POST` | `/api/auth/login` |
+
+Authenticate a user via email + password as implemented in `app/api/auth/login/route.ts`.
+
+## Authorization
+
+- No bearer token required. Provide credentials in the request body.
+- Response sets the `token` HTTP-only cookie when executed from a browser.
+
+## Body
+
+| Field | Type | Required | Description |
+| ----- | ---- | -------- | ----------- |
+| `email` | string | Yes | Workspace email address. |
+| `password` | string | Yes | Plain-text password that will be hashed server-side. |
+| `remember` | boolean | Yes | Controls cookie lifetime (set to `true` for 30-day sessions). |
+
+## Response
+
+```jsonc
+{
+  "status": "ok",
+  "token": "tel_session_jwt"
+}
+```
+
+Error responses look like `{ "status": "error", "message": "Invalid login details" }`.
+
+<details class="try-it">
+  <summary>Try it</summary>
+
+```bash
+curl https://app.telentir.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "ops@telentir.com",
+    "password": "P@ssw0rd!",
+    "remember": true
+  }'
+```
+</details>
+
+  </section>
+  <aside>
+    <h3>Examples</h3>
+    <h4>cURL</h4>
+
+```bash
+curl https://app.telentir.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"ops@telentir.com","password":"P@ssw0rd!","remember":true}'
+```
+
+    <h4>JavaScript (fetch)</h4>
+
+```javascript
+const res = await fetch('https://app.telentir.com/api/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email: 'ops@telentir.com', password: 'P@ssw0rd!', remember: true }),
+  credentials: 'include',
+});
+const data = await res.json();
+```
+
+    <h4>Sample response</h4>
+
+```json
+{"status":"ok","token":"tel_session_jwt"}
+```
+  </aside>
+</div>
+
+<style>
+.endpoint-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+.endpoint-grid aside {
+  border-left: 1px solid var(--mint-border, #e5e7eb);
+  padding-left: 1rem;
+}
+details.try-it {
+  margin-top: 1rem;
+  border: 1px solid var(--mint-border, #e5e7eb);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--mint-bg-muted, #fafafa);
+}
+details.try-it > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+</style>

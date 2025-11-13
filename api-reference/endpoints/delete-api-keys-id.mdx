@@ -1,0 +1,94 @@
+---
+title: 'DELETE /api/api-keys/{id}'
+description: 'Remove an API key.'
+---
+
+<div class="endpoint-grid">
+  <section>
+
+### Endpoint
+
+| Method | Path |
+| ------ | ---- |
+| `DELETE` | `/api/api-keys/{id}` |
+
+Deletes a key owned by the authenticated user.
+
+## Authorization
+
+- Requires bearer token / API key for a phone-verified user.
+
+## Path parameters
+
+| Param | Type | Description |
+| ----- | ---- | ----------- |
+| `id` | string | The API key ID (e.g., `key_123`). |
+
+## Body
+
+_Not applicable._
+
+## Response
+
+HTTP `204 No Content` on success.
+
+<details class="try-it">
+  <summary>Try it</summary>
+
+```bash
+curl https://app.telentir.com/api/api-keys/key_123 \
+  -X DELETE \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+```
+</details>
+
+  </section>
+  <aside>
+    <h3>Examples</h3>
+    <h4>cURL</h4>
+
+```bash
+curl https://app.telentir.com/api/api-keys/key_123 \
+  -X DELETE \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+```
+
+    <h4>JavaScript (fetch)</h4>
+
+```javascript
+await fetch('https://app.telentir.com/api/api-keys/key_123', {
+  method: 'DELETE',
+  headers: { Authorization: `Bearer ${token}` },
+});
+```
+
+    <h4>Sample response</h4>
+
+```text
+204 No Content
+```
+  </aside>
+</div>
+
+<style>
+.endpoint-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+.endpoint-grid aside {
+  border-left: 1px solid var(--mint-border, #e5e7eb);
+  padding-left: 1rem;
+}
+details.try-it {
+  margin-top: 1rem;
+  border: 1px solid var(--mint-border, #e5e7eb);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--mint-bg-muted, #fafafa);
+}
+details.try-it > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+</style>
