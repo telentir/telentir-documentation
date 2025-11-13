@@ -67,9 +67,24 @@
     "global": {
       "anchors": [
         {
+          "anchor": "Community",
+          "href": "https://telentir.com/pricing",
+          "icon": "price-tag"
+        },
+        {
+          "anchor": "Pricing",
+          "href": "https://telentir.com/pricing",
+          "icon": "price-tag"
+        },
+        {
           "anchor": "Blog",
           "href": "https://telentir.com/blog",
           "icon": "newspaper"
+        },
+        {
+          "anchor": "Enterprise",
+          "href": "https://telentir.com/enterprise",
+          "icon": "enterprise"
         }
       ]
     }
