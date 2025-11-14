@@ -1,29 +1,5 @@
 ---
 title: 'POST /api/connect'
 description: 'Run connector job'
-openapi: "api-reference/openapi.json POST /api/connect"
+openapi: "/api-reference/openapi.json POST /api/connect"
 ---
-
-## Try it
-
-```bash
-curl https://app.telentir.com/api/connect \
-  -X POST \
-  -H "Authorization: Bearer $TELENTIR_TOKEN"
-  -H "Content-Type: application/json" \
-  -d '{ }'
-```
-
-## Body
-
-**Required:** yes
-- `application/json` body schema:
-```json
-{
-  "$ref": "#/components/schemas/ConnectRequest"
-}
-```
-
-## Response
-
-- **204** - Job accepted

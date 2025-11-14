@@ -1,30 +1,5 @@
 ---
 title: 'PUT /api/objects/publish/{type}/{relatedId}'
 description: 'Publish an object to a logical type'
-openapi: "api-reference/openapi.json PUT /api/objects/publish/{type}/{relatedId}"
+openapi: "/api-reference/openapi.json PUT /api/objects/publish/{type}/{relatedId}"
 ---
-
-## Try it
-
-```bash
-curl https://app.telentir.com/api/objects/publish/{type}/{relatedId} \
-  -X PUT \
-  -H "Authorization: Bearer $TELENTIR_TOKEN"
-  -H "Content-Type: application/json" \
-  -d '{ }'
-```
-
-## Body
-
-**Required:** yes
-- `application/json` body schema:
-```json
-{
-  "$ref": "#/components/schemas/PublishRequest"
-}
-```
-
-## Response
-
-- **204** - Published
-- **400** - No description
