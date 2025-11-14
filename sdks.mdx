@@ -1,0 +1,172 @@
+---
+title: 'SDKs'
+description: 'Use the official Telentir TypeScript SDK to talk to the workspace API, manage encrypted data, and react to events.'
+---
+
+The open-source [telentir/sdk](https://github.com/telentir/sdk) repository ships
+the canonical TypeScript client for Telentir. It wraps authenticated REST
+endpoints, encrypted object helpers, billing, events, and domain repositories
+such as contacts, campaigns, or knowledge bases.
+
+## Install
+
+```bash
+npm install @silyze/telentir-sdk
+```
+
+Pick the crypto provider that matches your runtime:
+
+```bash
+# BrowserCrypto
+npm install jose
+
+# NodeCrypto
+npm install jsonwebtoken
+```
+
+## Connect
+
+```ts
+import "dotenv/config";
+import { Telentir, crypto } from "@silyze/telentir-sdk";
+
+const telentir = await Telentir.connect({
+  apiKey: process.env.TELENTIR_API_KEY!,
+  crypto: new crypto.BrowserCrypto(await import("jose")),
+  keyCache: new crypto.InMemoryKeyCache(), // optional but speeds up decrypts
+});
+```
+
+Once connected, `telentir` exposes strongly typed repositories that mirror the
+server-side resources.
+
+## Key caching strategies
+
+Reducing key exchanges drastically improves latency. Pick one of the built-in
+cache adapters:
+
+```ts
+// straight in-memory cache (optionally configure ttlMs / maxEntries)
+const keyCache = new crypto.InMemoryKeyCache();
+
+// persist encrypted material to disk
+import { promises as fs } from "fs";
+const keyCacheFs = new crypto.FsKeyCache(fs, {
+  directory: "./.telentir-keys",
+  ttlMs: 15 * 60_000,
+});
+
+// leverage localStorage / sessionStorage in the browser
+const keyCacheStorage = new crypto.StorageKeyCache(window.localStorage, {
+  ttlMs: 5 * 60_000,
+  maxEntries: 100,
+});
+```
+
+## Working with repositories
+
+### Contacts
+
+```ts
+const createdId = await telentir.contacts.create({
+  name: "Simeon",
+  phone: "+123456789",
+  tags: ["vip"],
+  status: "active",
+});
+
+const contact = await telentir.contacts.get(createdId);
+await telentir.contacts.update(createdId, { ...contact, status: "inactive" });
+await telentir.contacts.delete(createdId);
+
+await telentir.contacts.fetchLeads({
+  credits: 25,
+  industry: ["software"],
+  country: ["US"],
+});
+```
+
+### Campaigns
+
+```ts
+const campaignId = await telentir.campaigns.create({
+  name: "Spring Outreach",
+  type: "prompt",
+  prompt: { text: "Call and schedule a demo." },
+  agents: [],
+  contacts: { tags: ["warm"], items: [] },
+  relations: {},
+});
+
+await telentir.campaigns.publish(campaignId);
+await telentir.campaigns.unpublish(campaignId);
+```
+
+### Knowledge bases
+
+```ts
+const kb = await telentir.knowledgeBases.create({
+  name: "Support Playbook",
+  description: "Support processes and scripts",
+});
+
+await telentir.knowledgeBases.uploadLinks(kb.id, [
+  "https://example.com/process",
+  "https://example.com/scripts",
+]);
+
+const results = await telentir.knowledgeBases.search(kb.id, "refund policy");
+```
+
+### Session calls
+
+```ts
+await telentir.sessions.call({
+  type: "prompt",
+  prompt: "Reach out and collect feedback.",
+  contact: {
+    id: "contact-id",
+    name: "Mihail",
+    phone: "+111111111",
+    tags: [],
+    status: "active",
+  },
+  agent: {
+    id: "agent-id",
+    type: "ai",
+    persona: "openai-verse",
+    avatar: "",
+    firstName: "Demo",
+    lastName: "Agent",
+    language: "en",
+  },
+});
+```
+
+### Billing & credits
+
+```ts
+const state = await telentir.billing.getState();
+console.log(state.plan, state.usage);
+```
+
+### Event stream
+
+```ts
+const abort = new AbortController();
+
+for await (const event of telentir.events.listen("object_created", undefined, {
+  signal: abort.signal,
+})) {
+  console.log("object created", event);
+}
+
+abort.abort();
+```
+
+## Next steps
+
+- Star or clone [telentir/sdk](https://github.com/telentir/sdk) to browse the
+  full source, typings, and helper utilities.
+- Combine the SDK with the [API Reference](/api-reference/introduction) when you
+  need endpoint details, response schemas, or encryption requirements.
