@@ -1,10 +1,10 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "title": "Telentir workspace API",
-    "description": "Key authentication and encrypted object endpoints implemented by the telentir-web project.",
-    "version": "2025-11-13"
-  },
+  "openapi": "3.0.3",
+"info": {
+  "title": "Telentir workspace API",
+  "description": "Key authentication and encrypted object endpoints implemented by the telentir-web project.",
+  "version": "1.0.0"
+},
   "servers": [
     {
       "url": "https://app.telentir.com"
@@ -18,15 +18,6 @@
       "bearerAuth": []
     }
   ],
-  "seo": {
-    "metatags": {
-      "title": "Telentir API Documentation",
-      "og:image": "/og-docs-tel.png",
-      "keywords": "Telentir, API, Documentation, Developer, Guide, Reference, ai voice agent, automation, no-code, low-code",
-      "description": "Reference for workspace authentication, encrypted objects, and automation endpoints that power Telentir's AI voice agents."
-    },
-    "indexing": "all"
-  },
   "paths": {
     "/api/auth/login": {
       "post": {

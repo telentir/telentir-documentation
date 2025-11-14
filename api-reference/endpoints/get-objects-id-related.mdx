@@ -1,9 +1,20 @@
 ---
 title: 'GET /api/objects/{id}/related'
-description: 'List related encrypted child objects.'
-api:
-  - "Endpoint - GET /api/objects/{id}/related"
+description: 'List related encrypted objects'
+openapi: "api-reference/openapi.json GET /api/objects/{id}/related"
 ---
 
-Use the auto-generated reference below to inspect request/response schemas straight from the OpenAPI source.
+## Try it
 
+```bash
+curl https://app.telentir.com/api/objects/{id}/related \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+```
+
+## Body
+
+_This endpoint does not accept a request body._
+
+## Response
+
+- **200** - Array of encrypted objects

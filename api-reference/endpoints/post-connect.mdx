@@ -1,9 +1,29 @@
 ---
 title: 'POST /api/connect'
-description: 'Stream data from Telentir connectors.'
-api:
-  - "Endpoint - POST /api/connect"
+description: 'Run connector job'
+openapi: "api-reference/openapi.json POST /api/connect"
 ---
 
-Use the auto-generated reference below to inspect request/response schemas straight from the OpenAPI source.
+## Try it
 
+```bash
+curl https://app.telentir.com/api/connect \
+  -X POST \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+  -H "Content-Type: application/json" \
+  -d '{ }'
+```
+
+## Body
+
+**Required:** yes
+- `application/json` body schema:
+```json
+{
+  "$ref": "#/components/schemas/ConnectRequest"
+}
+```
+
+## Response
+
+- **204** - Job accepted

@@ -1,13 +1,6 @@
 ---
 title: 'Encrypted data plane'
 description: 'Root objects, keys, encrypted payloads, publish/unpublish, and ingestion'
-api:
-  - "Root"
-  - "Servers"
-  - "Keys"
-  - "Objects"
-  - "Events"
-  - "Connect"
 ---
 
 All endpoints on this page rely on the `objectAuth` middleware. You must supply
@@ -158,5 +151,9 @@ The endpoint itself returns `204` once the ingestion stream completes (or early
 if no allowance is available). Because the actual objects are created
 asynchronously, subscribe to the relevant `/api/events/object_created` stream to
 observe progress.
+
+
+
+
 
 

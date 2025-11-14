@@ -1,9 +1,49 @@
 ---
 title: 'POST /api/auth/login'
-description: 'Authenticate with email and password.'
-api:
-  - "Endpoint - POST /api/auth/login"
+description: 'Sign in with email & password'
+openapi: "api-reference/openapi.json POST /api/auth/login"
 ---
 
-Use the auto-generated reference below to inspect request/response schemas straight from the OpenAPI source.
+## Try it
 
+```bash
+curl https://app.telentir.com/api/auth/login \
+  -X POST \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+  -H "Content-Type: application/json" \
+  -d '{ }'
+```
+
+## Body
+
+**Required:** yes
+- `application/json` body schema:
+```json
+{
+  "type": "object",
+  "required": [
+    "email",
+    "password",
+    "remember"
+  ],
+  "properties": {
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "password": {
+      "type": "string",
+      "format": "password"
+    },
+    "remember": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
+```
+
+## Response
+
+- **200** - Login status
+- **400** - No description

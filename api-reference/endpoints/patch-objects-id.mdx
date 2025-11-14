@@ -1,9 +1,30 @@
 ---
 title: 'PATCH /api/objects/{id}'
-description: 'Replace the ciphertext for an object.'
-api:
-  - "Endpoint - PATCH /api/objects/{id}"
+description: 'Replace ciphertext'
+openapi: "api-reference/openapi.json PATCH /api/objects/{id}"
 ---
 
-Use the auto-generated reference below to inspect request/response schemas straight from the OpenAPI source.
+## Try it
 
+```bash
+curl https://app.telentir.com/api/objects/{id} \
+  -X PATCH \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+  -H "Content-Type: application/json" \
+  -d '{ }'
+```
+
+## Body
+
+**Required:** yes
+- `application/json` body schema:
+```json
+{
+  "$ref": "#/components/schemas/EncryptedObjectInput"
+}
+```
+
+## Response
+
+- **204** - Updated
+- **404** - No description

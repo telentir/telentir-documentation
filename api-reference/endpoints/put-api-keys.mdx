@@ -1,9 +1,30 @@
 ---
 title: 'PUT /api/api-keys'
-description: 'Create a new API key.'
-api:
-  - "Endpoint - PUT /api/api-keys"
+description: 'Create an API key'
+openapi: "api-reference/openapi.json PUT /api/api-keys"
 ---
 
-Use the auto-generated reference below to inspect request/response schemas straight from the OpenAPI source.
+## Try it
 
+```bash
+curl https://app.telentir.com/api/api-keys \
+  -X PUT \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+  -H "Content-Type: application/json" \
+  -d '{ }'
+```
+
+## Body
+
+**Required:** yes
+- `application/json` body schema:
+```json
+{
+  "$ref": "#/components/schemas/ApiKeyCreateRequest"
+}
+```
+
+## Response
+
+- **200** - New key (plaintext is returned once)
+- **400** - No description

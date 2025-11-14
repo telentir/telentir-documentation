@@ -1,6 +1,5 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "openapi": "api-reference/openapi.json",
   "theme": "mint",
   "name": "Telentir",
   "colors": {
@@ -46,6 +45,7 @@
       },
       {
         "tab": "API reference",
+        "openapi": "api-reference/openapi.json",
         "groups": [
           {
             "group": "Core platform",

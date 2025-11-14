@@ -1,9 +1,30 @@
 ---
 title: 'PUT /api/objects/publish/{type}/{relatedId}'
-description: 'Publish an object under a logical type.'
-api:
-  - "Endpoint - PUT /api/objects/publish/{type}/{relatedId}"
+description: 'Publish an object to a logical type'
+openapi: "api-reference/openapi.json PUT /api/objects/publish/{type}/{relatedId}"
 ---
 
-Use the auto-generated reference below to inspect request/response schemas straight from the OpenAPI source.
+## Try it
 
+```bash
+curl https://app.telentir.com/api/objects/publish/{type}/{relatedId} \
+  -X PUT \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+  -H "Content-Type: application/json" \
+  -d '{ }'
+```
+
+## Body
+
+**Required:** yes
+- `application/json` body schema:
+```json
+{
+  "$ref": "#/components/schemas/PublishRequest"
+}
+```
+
+## Response
+
+- **204** - Published
+- **400** - No description

@@ -1,9 +1,50 @@
 ---
 title: 'POST /api/servers'
-description: 'Register a new root server key pair.'
-api:
-  - "Endpoint - POST /api/servers"
+description: 'Register a root server'
+openapi: "api-reference/openapi.json POST /api/servers"
 ---
 
-Use the auto-generated reference below to inspect request/response schemas straight from the OpenAPI source.
+## Try it
 
+```bash
+curl https://app.telentir.com/api/servers \
+  -X POST \
+  -H "Authorization: Bearer $TELENTIR_TOKEN"
+  -H "Content-Type: application/json" \
+  -d '{ }'
+```
+
+## Body
+
+**Required:** yes
+- `application/json` body schema:
+```json
+{
+  "type": "object",
+  "required": [
+    "name",
+    "mode"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "generate",
+        "upload_public"
+      ]
+    },
+    "publicKey": {
+      "type": "string",
+      "description": "Base64URL encoded SPKI string (required when uploading your own key)"
+    }
+  }
+}
+```
+
+## Response
+
+- **200** - Server record and public key material
+- **400** - No description
